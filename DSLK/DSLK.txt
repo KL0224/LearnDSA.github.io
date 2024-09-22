@@ -1,0 +1,645 @@
+================= DANH SÁCH LIÊN KẾT ===============
+I DANH SÁCH LIÊN KẾT: Linked List
+	* Khái niệm : Danh sách liên kết là cấu trúc dữ liệu được sử dụng để lưu trữ các phần tử tương tự như mảng nhưng có nhiều điểm đặc biệt.
+	* Tích chất:
+		- Mở rộng và thu hẹp linh hoạt.
+		- Các node trong dslk cấp phát động.
+		- Phần tử cuối trỏ và NULL.
+		- CTDL cấp phát động.
+		- Không lãng phí bộ nhớ, nhưng cần bộ nhớ lưu địa chỉ.
+	* So sánh giữa mảng và DSLK:
+		- Mảng : 
+			+ Cấp phát tỉnh.
+			+ Vùng nhớ liên tiếp.
+			+ Truy cập tới các phần tử bằng chỉ số O(1).
+			+ Ưu điểm:
+				* Dễ cài đặt, sử dụng.
+				* Truy cập mảng với độ phức tạp hằng số.
+			+ Nhược điểm:
+				* Lãng phí bộ nhớ.
+				* Kích thước mảng cố định.
+				* Bộ nhớ cấp phát theo khối.
+				* Thêm và xóa phần tử khó khăn.
+		- Danh sách liên kết:
+			+ Các node được cấp phát động rải rạc trong bộ nhớ.
+			+ Ưu điểm:
+				* Có thể mở rộng với độ phức tạp hằng số.
+				* Dễ dàng mở rộng và thu hẹp kích thước.
+				* Có thể cấp phát số lượng lớn các node.
+			+ Nhược điểm:
+				* Khó khăn trong việc truy cập phần tử ở vị trí bất kì (O(n)).
+				* Khó khăn trong việc cài đặt.
+				* Tốn bộ nhớ để lưu địa chỉ.
+		- Độ phức tạp:
+			+ Truy xuất phần tử: O(1) - O(n)
+			+ Chèn hoặc xóa đầu : O(n)(Mảng chưa full) - O(1)
+			+ Chèn ở cuối : O(1)(Mảng chưa full) - O(n)
+			+ Xóa ở cuối : O(1) - O(n)
+			+ Chèn giữa : O(n)(Mảng chưa full) - O(n)
+			+ Xóa giữa : O(n) - O(n)
+
+II DANH SÁCH LIÊN KẾT ĐƠN : SINGLER LINKED LIST
+1. Cấu trúc của một node: bao gồm giá trị và một con trỏ để lưu địa chỉ và một node được cấp phát động.
+	struct node
+	{
+		int data;
+		node* next;
+	}
+	* Node cuối cùng trong danh sách liên kết thì là NULL
+
+Nội dung code:
+
+#include <bits/stdc++.h>
+using namespace std;
+
+struct node
+{
+	int data;
+	node* next;
+};
+
+node* newNode(int x)
+{
+	node* newnode = new node();
+	newnode->data = x;
+	newnode->next = NULL;
+	return newnode;
+}
+
+void Printf(node* head) // Truyền tham trị trị chứ không phải tham chiếu
+{
+	while(head != NULL)
+	{
+		cout << head->data << " ";
+		head = head->next;
+	}
+}
+
+int Count(node* head)
+{
+	int dem = 0;
+	while(head != NULL)
+	{
+		dem++;
+		head = head->next;
+	}
+	return dem;
+}
+
+void PushFront(node** head, int x) // Con trỏ trỏ node head
+{
+	node* newnode = newNode(x);
+	newnode->next = *head; // *head địa chỉ code node head
+	*head = newnode;
+}
+
+void PushBack(node** head, int x)
+{
+	node* newnode = newNode(x);
+	if(*head == NULL)
+	{
+		*head = newnode;
+		return;
+	}
+
+	node* temp = *head;
+	while(temp->next != NULL)
+	{
+		temp = temp->next;
+	}
+	temp->next = newnode;
+}
+
+void AddHead(node *&head, int x)
+{
+	node* newnode = newNode(x);
+	newnode->next = head;
+	head = newnode;
+}
+
+void AddTail(node *&head, int x)
+{
+	node* newnode = newNode(x);
+	if(head == NULL)
+	{
+		head = newnode;
+		return;
+	}
+
+	node* temp = head;
+	while(temp->next != NULL)
+	{
+		temp = temp->next;
+	}
+	temp->next = newnode;
+}
+
+void Insert(node *&head, int k, int x)
+{
+	int n = Count(head);
+	if(k < 1 || k > n + 1) return;
+	if(k == 1) 
+	{
+		AddHead(head, x);
+		return;
+	}
+	node* temp = head;
+	for(int i = 1; i <= k - 2; i++)
+	{
+		temp = temp->next;
+	}
+	node* newnode = newNode(x);
+	newnode->next = temp->next;
+	temp->next = newnode;
+}
+
+void DeleteHead(node *&head)
+{
+	if(head == NULL) return;
+	node* temp = head;
+	head = head->next;
+	delete temp;
+}
+
+void DeleteTail(node *&head)
+{
+	if(head == NULL) return;
+	node* temp = head;
+	if(temp->next == NULL) // Ds co 1 node
+	{
+		head = NULL;
+		delete temp;
+		return;
+	}
+
+	while(temp->next->next != NULL)
+	{
+		temp = temp->next;
+	}
+	node *last = temp->next;
+	temp->next = NULL;
+	delete last;
+}
+
+void DeleteAt(node *&head, int k)
+{
+	int n = Count(head);
+	if(k < 1 || k > n) return;
+	if(k == 1)
+	{
+		DeleteHead(head);
+		return;
+	}
+	node* temp = head;
+	for(int i = 1; i <= k - 2; i++)
+	{
+		temp = temp->next;
+	}
+	// temp : k - 1
+	node *del = temp->next; // del : k
+	temp->next = del->next;
+	delete del;
+}
+
+node* PPre(node *head)
+{
+	node* pre = NULL;
+	node* curr = head;
+	node* Next = NULL;
+
+	while(curr != NULL)
+	{
+		Next = curr->next; // lấy thằng sau
+		curr->next = pre; // thằng hiện tại trỏ thằng trước nó
+		pre = curr; // cập nhật thằng trước là thằng hiện tại
+		curr = Next; // Cập nhật thằng hiện tại là thằng sau nó
+	}
+
+	return pre;
+}
+
+void PrintfPre(node *head)
+{
+	// if(head == NULL) return;
+	// cout << head->data << " ";
+	// return PrintfPre(head->next);
+	node* temp = head;
+	temp = PPre(temp);
+	while(temp != NULL)
+	{
+		cout << temp->data << " ";
+		temp = temp->next;
+	}
+
+}
+
+void Sort(node *&head)
+{
+	for(node *i = head; i != NULL; i = i->next)
+	{
+		node* minNode = i;
+		for(node* j = i->next; j != NULL; j = j->next)
+		{
+			if(j->data < minNode->data)
+			{
+				minNode = j;
+			}
+		}
+		int temp = minNode->data;
+		minNode->data = i->data;
+		i->data = temp;
+	}
+}
+
+int main()
+{
+	node* head = NULL;
+	while(true)
+	{
+		cout << "===========================\n";
+		cout << "1. Them vao dau\n";
+		cout << "2. Them vao cuoi\n";
+		cout << "3. Them vao giua\n";
+		cout << "4. Xoa dau\n";
+		cout << "5. Xoa cuoi\n";
+		cout << "6. Xoa giua\n";
+		cout << "7. Sap xep\n";
+		cout << "8. Duyet\n";
+		cout << "0. Thoat\n";
+		cout << "===========================\n";
+		cout << "Nhap lua chon: ";
+		int chon; cin >> chon;
+		if(chon == 1)
+		{
+			int x;
+			cout << "Nhap gia tri: ";
+			cin >> x;
+			AddHead(head, x);
+		}
+		else if(chon == 2)
+		{
+			int x;
+			cout << "Nhap gia tri: ";
+			cin >> x;
+			AddTail(head, x);
+		}
+		else if(chon == 3)
+		{
+			int x; cout << "Nhap gia tri: "; cin >> x;
+			int k; cout << "Nhap vi tri: "; cin >> k;
+			Insert(head, k, x);
+		}
+		else if(chon == 4)
+			DeleteHead(head);
+		else if(chon == 5)
+			DeleteTail(head);
+		else if(chon == 6)
+		{
+			int k; cout << "Nhap vi tri: "; cin >> k;
+			DeleteAt(head, k);
+		}
+		else if(chon == 7)
+			Sort(head);
+		else if(chon == 8)
+		{
+			Printf(head);
+			cout << endl;
+		}
+		else 
+			break;
+	}
+	return 0;
+}
+
+
+Code Danh sach sinh vien:
+
+#include <bits/stdc++.h>
+using namespace std;
+
+struct SinhVien
+{
+	string name;
+	double gpa;
+	SinhVien() {}
+	SinhVien(string name, double gpa) : name(name), gpa(gpa) {}
+};
+
+struct node
+{
+	SinhVien data;
+	node* next;
+};
+
+node* newNode(SinhVien v)
+{
+	node* newnode = new node();
+	newnode->data = v;
+	newnode->next = NULL;
+	return newnode;
+}
+
+void AddTail(node *&head, SinhVien v)
+{
+	node* newnode = newNode(v);
+	if(head == NULL)
+	{
+		head = newnode;
+		return;
+	}
+	node* temp = head;
+	while(temp->next != NULL)
+	{
+		temp = temp->next;
+	}
+	temp->next = newnode;
+}
+
+void Print(node *head)
+{
+	while(head != NULL)
+	{
+		cout << head->data.name << " " << fixed << setprecision(2) << head->data.gpa << endl;
+		head = head->next;
+	}
+}
+
+void Sort(node *&head)
+{
+	for(node* i = head; i != NULL; i = i->next)
+	{
+		node* nodeMin = i;
+		for(node* j = i->next; j != NULL; j = j->next)
+		{
+			if(nodeMin->data.gpa > j->data.gpa)
+			{
+				nodeMin = j;
+			}
+			else if(nodeMin->data.gpa == j->data.gpa)
+			{
+				if(nodeMin->data.name > j->data.name)
+				{
+					nodeMin = j;
+				}
+			}
+		}
+		SinhVien temp = nodeMin->data;
+		nodeMin->data = i->data;
+		i->data = temp;
+	}
+}
+
+int main()
+{
+	node* head = NULL;
+	SinhVien a("Kiet", 10);
+	SinhVien b("Loan", 8);
+	SinhVien c("Khoi", 9);
+	SinhVien d("Khuong", 10);
+	AddTail(head, a);
+	AddTail(head, b);
+	AddTail(head, c);
+	AddTail(head, d);
+	Print(head);
+	cout << "Sau khi sap xep\n";
+	Sort(head);
+	Print(head);
+
+}
+
+II DANH SÁCH LIÊN KẾT ĐÔI
+
+Code:
+
+#include <bits/stdc++.h>
+using namespace std;
+
+struct node 
+{
+	int data;
+	node* next;
+	node* pre;
+};
+
+node* newNode(int x)
+{
+	node* newnode = new node;
+	newnode->data = x;
+	newnode->next = NULL;
+	newnode->pre = NULL;
+	return newnode;
+}
+
+void Printf(node* head)
+{
+	while(head != NULL)
+	{
+		cout << head->data << " ";
+		head = head->next;
+	}
+	cout << endl;
+}
+
+void AddHead(node *&head, int x)
+{
+	node* newnode = newNode(x);
+	if(head == NULL)
+	{
+		head = newnode;
+		return;
+	}
+	newnode->next = head;
+	head->pre = newnode;
+	head = newnode;
+}
+
+void AddTail(node *&head, int x)
+{
+	node* newnode = newNode(x);
+	if(head == NULL)
+	{
+		head = newnode;
+		return;
+	}
+	node* temp = head;
+	while(temp->next != NULL)
+	{
+		temp = temp->next;
+	}
+	temp->next = newnode;
+	newnode->pre = temp;
+}
+
+int size(node *head)
+{
+	int dem = 0;
+	while(head != NULL)
+	{
+		dem++;
+		head = head->next;
+	}
+	return dem;
+}
+
+void AddAt(node *&head, int k, int x)
+{
+	int n = size(head);
+	if(k < 1 || k > n + 1)
+	{
+		cout << "Vi tri khong hop le\n";
+		return;
+	}
+	if(k == 1)
+	{
+		AddHead(head, x);
+		return;
+	}
+	node* temp = head;
+	for(int i = 1; i <= k - 1; i++)
+	{
+		temp = temp->next;
+	}
+	node* newnode = newNode(x);
+	newnode->next = temp;
+	temp->pre->next = newnode;
+	newnode->pre = temp->pre;
+	temp->pre = newnode;
+
+}
+
+void DeleteHead(node *&head)
+{
+	if(head == NULL) 
+	{
+		cout << "DS rong, khong xoa duoc\n";
+		return;
+	}
+	node* temp = head;
+	head = head->next;
+	head->pre = NULL;
+	delete temp;
+}
+
+void DeleteTail(node *&head)
+{
+	if(head == NULL) 
+	{
+		cout << "DS rong, khong xoa duoc\n";
+		return;
+	}
+	node* temp = head;
+	if(temp->next == NULL) // Ds co 1 node
+	{
+		head = NULL;
+		delete temp;
+		return;
+	}
+
+	while(temp->next->next != NULL)
+	{
+		temp = temp->next;
+	}
+	node *last = temp->next;
+	temp->next = NULL;
+	delete last;
+}
+
+void DeleteAt(node *&head, int k)
+{
+	int n = size(head);
+	if(k < 1 || k > n) 
+	{
+		cout << "Vi tri khong hop le\n";
+		return;
+	}
+	if(k == 1)
+	{
+		DeleteHead(head);
+		return;
+	}
+	node* temp = head;
+	for(int i = 1; i <= k - 2; i++)
+	{
+		temp = temp->next;
+	}
+	// temp : k - 1
+	node *del = temp->next; // del : k
+	temp->next = del->next;
+	if(del->next != NULL)
+		del->next->pre = temp;
+	delete del;
+}
+
+void Sort(node *&head)
+{
+	for(node *i = head; i != NULL; i = i->next)
+	{
+		node* minNode = i;
+		for(node* j = i->next; j != NULL; j = j->next)
+		{
+			if(j->data < minNode->data)
+			{
+				minNode = j;
+			}
+		}
+		int temp = minNode->data;
+		minNode->data = i->data;
+		i->data = temp;
+	}
+}
+
+
+int main()
+{
+	node* head = NULL;
+	while(true)
+	{
+		cout << "======================\n";
+		cout << "1. Them dau\n";
+		cout << "2. Them cuoi\n";
+		cout << "3. Them giua\n";		
+		cout << "4. Xoa dau\n";
+		cout << "5. Xoa cuoi\n";
+		cout << "6. Xoa giua\n";
+		cout << "7. Sap xep\n";
+		cout << "8. Duyet\n";
+		cout << "0. Thoat\n";
+		cout << "======================\n";
+		int chon; cout << "Nhap lua chon: "; cin >> chon;
+		if(chon == 1)
+		{
+			int x; cout << "Nhap gia tri: "; cin >> x;
+			AddHead(head, x);
+		}
+		else if(chon == 2)
+		{
+			int x; cout << "Nhap gia tri: "; cin >> x;
+			AddTail(head, x);
+		}
+		else if(chon == 3)
+		{
+			int x; cout << "Nhap gia tri: "; cin >> x;
+			int k; cout << "Nhap vi tri: "; cin >> k;
+			AddAt(head, k, x);
+		}
+		else if(chon == 4)
+			DeleteHead(head);
+		else if(chon == 5)
+			DeleteTail(head);
+		else if(chon == 6)
+		{
+			int k; cout << "Nhap vi tri: "; cin >> k;
+			DeleteAt(head, k);
+		}
+		else if(chon == 7)
+			Sort(head);
+		else if(chon == 8)
+		{
+			Printf(head);
+			cout << endl;
+		}
+		else 
+			break;
+	}
+	return 0;
+}

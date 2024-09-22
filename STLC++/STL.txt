@@ -1,0 +1,279 @@
+#include <bits/stdc++.h>
+#include <iostream>
+using namespace std;
+using ll = long long;
+// foreach : Range base for loop
+// size
+// push_back
+
+int main()
+{
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+/*
+	vector<int> v(10); vector có 10 phần tử
+	vector<int> v(3, 100); // {100, 100, 100};
+	v.push_back(1); // {100, 100, 100, 1};
+	v.push_back(2); // {100, 100, 100, 1, 2};
+	v.push_back(3); // {100, 100, 100, 1, 2, 3};
+
+	v.insert(v.begin() + 2, 200);
+	v.erase(v.begin() + 4);
+	v.pop_back();
+	for(int x : v) cout << x << " ";
+
+	for(int x : v) //không thể dùng foreach thông thường để thay đổi phần tử
+	{
+		x = 1000;
+	}
+	for(int &x : v) //có thể dùng foreach với biến tham chiếu để thay đổi phần tử
+	{
+		x = 1000;
+	}
+
+	iterator : begin(phần tử đầu), end(phần tử sau phần tử cuối cùng), rend(phần tử trước phần tử cuối cùng), rbegin(phần tử cuối cùng).
+	vector<int>::iterator it = v.begin(); // == auto it = v.begin();
+	++it; it += 2;
+	cout << *it << endl; // * : dùng để giải tham chiếu
+	for(it = v.begin(); it != v.end(); it++)
+	{
+		cout << *it << " ";
+	}
+	vector<int>::iterator x = v.begin() + 4;
+	cout << * x << endl;
+
+
+	vector<int> v1;
+	int n; cin >> n;
+	for(int i = 0; i < n; i++)
+	{
+		int temp;
+		cin >> temp;
+		v1.push_back(temp);
+	}
+	for(int x : v1) cout << x << " ";
+
+	int m; cin >> m;
+	vector<int> v2(m);
+	for(int i = 0; i < m; i++)
+		{
+			cin >> v2[i];
+		}
+	for(auto x : v2) cout << x << " ";
+
+	pair<int, int> p = make_pair(10, 20); // first, second
+	cout << p.first << " " << p.second << endl;
+	pair<int, int> p1 = {100, 200};
+	cout << p1.first << " " << p1.second << endl;
+	pair<int, int> p2;
+	p2.first = 1000;
+	p2.second = 2000;
+	cout << p2.first << " " << p2.second << endl;
+	pair<int, int> p3(10000, 20000);
+	cout << p3.first << " " << p3.second << endl;
+
+	vector<pair<int, int>> vp;
+	pair<int, pair<int, int>> pp;
+	p.first = 10;
+	p.second.first = 100;
+	int n; cin >> n;
+	pair<int, int> a[n];
+	for(int i = 0; i < n; i++)
+	{
+		cin >> a[i].first >> a[i].second;
+	}
+	for(int i = 0; i < n; i++)
+	{
+		cout << a[i].first << " " << a[i].second << endl;
+	}
+
+	//set.insert() == O(logn), set không có chỉ số
+	set<int> s; // {}
+	s.insert(2); // {2}
+	s.insert(9); // {2, 9}
+	s.insert(0); // {0, 2, 9}
+	s.insert(3); // {0, 2, 3, 9}
+	s.insert(2); // {0, 2, 3, 9}
+	s.insert(10); // {0, 2, 3, 9, 10};
+	cout << s.size() << endl;
+
+	for(auto x : s) cout << x << " ";
+	cout << endl;
+	
+	// iterator: chỉ hỗ trợ toán tử ++, --
+	for(auto it = s.begin(); it != s.end(); it++)
+	{
+	 	cout << *it << " ";
+	}
+	cout << endl;
+
+	for(auto it = s.rbegin(); it != s.rend(); it--)
+	{
+	cout << *it << " ";
+	}
+	cout << endl;
+
+	set<int> s;
+	int n; cin >> n;
+	for(int i = 0; i < n; i++)
+	{
+		int temp;
+		cin >> temp;
+		s.insert(temp);
+	}
+	if(s.find(4) != s.end()) set.find() trả về iterator và O(logn)
+	{
+		cout << "FOUND";
+	}
+	else
+	{
+		cout << "NOT FOUND";
+	}
+	cout << endl;
+	if(s.count(5))
+	{
+		cout << "YES";
+	}
+	else
+	{
+		cout << "NO";
+	}
+	cout << endl;
+	//s.erase(4);
+	auto it = s.find(4);
+	s.erase(it);
+	for(auto x : s) cout << x << " ";
+
+	multiset<int> s;
+	int n; cin >> n;
+	for(int i = 0; i < n; i++)
+	{
+		int temp;
+		cin >> temp;
+		s.insert(temp);
+	}
+	auto it = s.find(3);
+	cout << *it << endl;
+	cout << distance(s.begin(), it) << endl;
+	auto it = s.find(3);
+	s.erase(2);
+	s.erase(it);
+	for(auto x : s) cout << x << " ";
+
+	unordered_set<int> s;
+	int n; cin >> n;
+	for(int i = 0; i < n; i++)
+	{
+		int temp;
+		cin >> temp;
+		s.insert(temp);
+	}
+	
+	for(auto x : s) cout << x << " ";
+
+// MAP : insert, search, find : O(logN)
+Cú pháp : map<datatype, datatype> name;
+(key, value)
+Mỗi phần tử trong map không được trùng key.
+Mỗi phần tử trong map là một cập (key, value) == pair.
+Duyệt:
+	for(pair<int, int> x : m)
+	{
+		cout << x.first << " " << x.second << endl;
+	}
+	for(map<int, int>::iterator it = m.begin(); it != m.end(); it++)
+	{
+		cout << it->first << " " << it->second << endl;
+	}
+Tìm kiếm: chỉ tìm kiếm được key
+	if(m.find(100) != m.end())
+	{
+		cout << "FOUND\n";
+	}
+	else
+	{
+		cout << "NOT FOUND\n";
+	}
+	if(m.count(100))
+	{
+		cout << "FOUND\n";
+	}
+	else
+	{
+		cout << "NOT FOUND\n";
+	}
+
+Xóa: m.erase(100); xóa cụm có key là 100
+
+Đếm số lượng xuất hiện:
++ Theo thứ tự tăng dần của key
+	map<int, int> m;
+	int n; cin >> n;
+	for(int i = 0; i < n; i++)
+	{
+		int temp;
+		cin >> temp;
+		m[temp]++;
+	}
+	for(auto x : m)
+	{
+		cout << x.first << " " << x.second << endl;
+	}
+
++ Theo thứ tự xuất hiện của key:
+
+map<int, int> m;
+	int n; cin >> n;
+	int a[1000];
+	for(int i = 0; i < n; i++)
+	{
+		cin >> a[i];
+		m[a[i]]++;
+	}
+	for(int i = 0; i < n; i++)
+	{
+		if(m[a[i]] != 0)
+		{
+			cout << a[i] << " " << m[a[i]] << endl;
+			m[a[i]] = 0;
+		}
+	}
+
+int maxx = 0;
+	string res;
+	for(auto x : m)
+	{
+		if(x.second >= maxx)
+		{
+			maxx = x.second;
+			res = x.first;
+		}
+	}
+
+	cout << res << " " << maxx << endl;
+	return 0;
+
+Multimap : cho phép lưu nhiều key giống nhau, vẫn có thứ tự và không dùng gán m[1] = 100 được
+
+multimap<int, int> m; 
+	m.insert({1, 100});
+	m.insert({2, 100});
+	m.insert({2, 400});
+
+	for(auto x : m)
+	{
+		cout << x.first << " " << x.second << endl;
+	}
+
+unordered_map: không lưu key giống nhau và không có thứ tự
+
+unordered_map<int, int> m;
+	m.insert({1, 100});
+	m.insert({2, 100});
+	m.insert({2, 400});
+
+	for(auto x : m)
+	{
+		cout << x.first << " " << x.second << endl;
+	}

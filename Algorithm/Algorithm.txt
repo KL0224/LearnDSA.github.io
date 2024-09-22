@@ -1,0 +1,211 @@
+MẢNG:
+1. Mảng cộng dồn: tạo ra một mảng tính tổng các phần tử trước đó.
+a. Mảng 1 chiều:
+	int n; cin >> n;
+	vector<int> a(n);
+	for(int i = 0; i < n; i++)
+	{
+		cin >> a[i];
+	}
+1:
+	vector<int> f(n);
+	int sum = 0;
+	for(int i = 0; i < n; i++)
+	{
+		sum += a[i];
+		f[i] = sum;
+	}
+2:
+	vector<int> f(n);
+	for(int i = 0; i < n; i++)
+	{
+		if(i == 0) F[i] = a[i];
+		else F[i] = F[i - 1] + a[i];
+	}
+
+	int q; cin >> q;
+	while(q--)
+	{
+		int l, r; cin >> l >> r; // l và r bắt đầu bằng 1.
+		--l; --r;
+		if(l == 0) cout << f[r] << endl;
+		else cout << f[r] - f[l - 1] << endl;
+	}
+b. Mảng 2 chiều:
+Tự tạo theo công thức:
+	int m, n; cin >> m >> n;
+	int a[m][n];
+	for(int i = 0; i < m; i++)
+	{
+		for(int j = 0; j < n; j++)
+		{
+			if(i == 0 || j == 0)
+			{
+				a[i][j] = 0;
+			}
+			else
+			{
+				cin >> a[i][j];
+			}
+		}
+	}
+
+	int prefix[m][n];
+	for(int i = 0; i <  m; i++)
+	{
+		for(int j = 0; j < n; j++)
+			if(i == 0 || j == 0)
+			{
+				prefix[i][j] = 0;
+			}
+			else
+			{
+				prefix[i][j] = prefix[i - 1][j] + prefix[i][j - 1] - prefix[i - 1][j - 1] + a[i][j];
+			}
+			
+	}
+
+	for(int i = 1; i < m; i++)
+	{
+		for(int j = 1; j < n; j++)
+			cout << prefix[i][j] << " ";
+		cout << endl;
+	}
+	int q; cin >> q;
+	while(q--)
+	{
+		int h1, h2;
+		int c1, c2;
+		cin >> h1 >> h2 >> c1 >> c2;
+		cout << prefix[h2][c2] - prefix[h1 - 1][c2] - prefix[h2][c1 - 1] + prefix[h1 - 1][c1 - 1] << endl;
+	}
+
+Khi khai báo một mảng cục bộ thì giá trị của nó sẽ là 0.
+
+Mảng hiệu:
+Bài tập xây dựng mảng sau q truy vấn từ chỉ số l đến chỉ số r tăng lên k đơn vị. In ra mảng cuối cùng.
+
+	int n, q; cin >> n >> q;
+	vector<int> a(n);
+	for(int i = 0; i < n; i++)
+	{
+		cin >> a[i];
+	}
+	vector<int> d(n + 3); // Khai báo rộng một xíu để cho trường hợp r + 1.
+	for(int i = 0; i < n; i++)
+	{
+		if(i == 0) d[i] = a[i];
+		else d[i] = a[i] - a[i -1];
+	}
+
+	while(q--)
+	{
+		int l, r, k; cin >> l >> r >> k;
+		d[l] += k;
+		d[r + 1] -= k;
+	}
+	for(int i = 0; i < n; i++)
+	{
+		if(i == 0) a[i] = d[i];
+		else a[i] = a[i - 1] + d[i];
+	}
+
+	for(int x : a)
+		cout << x << " ";
+
+Loang trên mảng 2 chiều:
+Bài tập tìm cực đại trên mảng 2 chiều (cực đại trong các ô chung đỉnh)
+
+int dx[8] = {-1, -1, -1, 0, 0, 1, 1, 1};
+int dy[8] = {-1, 0, 1, -1, 1, -1, 0, 1};
+
+	int n, m; cin >> n >> m;
+	int a[n][m];
+	for(int i = 0; i < n; i++)
+		for(int j = 0; j < m; j++)
+			cin >> a[i][j];
+
+	int dem = 0;
+	for(int i = 0; i < n; i++)
+	{
+		for(int j = 0; j < m; j++)
+		{
+			bool check = true;
+			for(int k = 0; k < 8; k++)
+			{
+				int i1 = i + dx[k], j1 = j + dy[k];
+				if(i1 >= 0 && i1 < n && j1 >= 0 && j1 < m)
+				{
+					if(a[i1][j1] >= a[i][j]) 
+						{
+							check = false;
+							break;
+						}
+				}
+			}
+			if(check) dem++;
+		}
+	}
+
+	cout << dem << endl;
+
+Bài tập loang các ô cùng miền có chung cạnh và là 1.
+#include <bits/stdc++.h>
+using ll = long long;
+#define pb push_back
+using namespace std;
+
+int dx[4] = {-1, 0, 0, 1};
+int dy[4] = {0, -1, 1, 0};
+
+int n, m;
+int a[1000][1000];
+
+void Nhap()
+{
+	cin >> n >> m;
+	for(int i = 0; i < n; i++)
+		for(int j = 0; j < m; j++)
+			cin >> a[i][j];
+}
+
+void Loang(int i, int j)
+{
+	a[i][j] = 0;
+	for(int k = 0; k < 4; k++)
+	{
+		int i1 = i + dx[k], j1 = j + dy[k];
+		if(i1 >= 0 && i1 < n && j1 >= 0 && j1 < m)
+		{
+			if(a[i1][j1]) 
+				{
+					Loang(i1, j1);
+				}
+		}
+	}
+}
+
+int main()
+{
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+
+	Nhap();
+	int dem = 0;
+	for(int i = 0; i < n; i++)
+	{
+		for(int j = 0; j < m; j++)
+			{
+				if(a[i][j])
+				{
+					dem++;
+					Loang(i, j);
+				}
+			}
+	}
+
+	cout << dem << endl;
+	return 0;
+}
+

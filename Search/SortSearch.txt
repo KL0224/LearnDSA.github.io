@@ -1,0 +1,88 @@
+SORTSEARCH
+1. hàm sort: O(NlogN) = intro sort : quick sort + heap sort
+* Mảng:
+	sort(a, a + n) : tăng dần
+	sort(a, a + n, greater<int>()) : giảm dần
+	sort(a + 2, a + 7, greater<int>()): từ chỉ số 2 đến chỉ số 6 giảm dần.
+	a, a + n là 2 con trỏ của mảng.
+*Vector:
+	sort(a.begin(), a.end(), greater<string>());
+	sort(a.begin() + x, a.begin() + y + 1);
+*Pair:
+	sort(a.begin(), a.end(), greater<pair<int, int>>());
+Comparison function: greater<int>(),... trả về true, false
+Creat comparison function
+a và b là cặp phần tử trong mảng
+Trả về true khi a và b đúng thứ tự và ngược lại
+bool cmp(int a, int b)
+{
+	if(a < b) return true;
+	return false;
+}
+
+sort(a, a + n, cmp)
+
+Dùng hàm sort để sắp xếp mảng theo thứ tự tăng dần của tổng chữ số và nếu cùng số chữ số thì sắp xếp giảm dần
+int sum(int n)
+{
+	int res = 0;
+	while(n)
+	{
+		res ++;
+		n /= 10;
+	}
+	return res;
+}
+bool cmp(int a, int b)
+{
+	if(sum(a) != sum(b)) return sum(a) < sum(b);
+	return a > b;
+}
+sort(a, a + n, cmp);
+
+// Sắp xếp các điểm tọa độ theo 3 tiêu chí:
+	+ Khoảng cách của điểm đến O.
+	+ Nếu cùng khoảng cách thì xét theo x tăng dần.
+	+ Nếu cùng x thì xét theo y tăng dần.
+
+bool cmp(pair<int, int> a, pair<int, int> b)
+{
+	if(pow(a.first, 2) + pow(a.second, 2) != pow(b.first, 2) + pow(b.second, 2))
+	{
+		return pow(a.first, 2) + pow(a.second, 2) < pow(b.first, 2) + pow(b.second, 2);
+	}
+	else
+	{
+		if(a.first != b.first) return a.first < b.first;
+		else
+		{
+			return a.second < b.second;
+		}
+	}
+}
+
+vector<pair<int, int>> p(n);
+sort(p.begin(), p.end(), cmp);
+
+*Stable trong sort khi các phần tử có cùng tiêu chí so sánh thì thằng nào đứng trước sẽ xuất hiện trước. Ví dụ: merge sort, insertion sort, bubble sort.
+C++ cung cấp stable_sort : có mergesort để sort và vẫn giữ thứ tự khi cùng tiêu chí.
+
+2. BinarySearch: O(log2N)
+Mảng đã được sắp xếp
+Hàm : binary_search(a, a + n, 10) : O(logN)
+(vị trí 1, vị trí 2, giá trị)
+Dùng khi mảng đã được sắp xếp hoặc có nhiều truy vấn.
+
+Mảng hoặc vector đã sắp xếp tăng dần:
+lower_bound(a, a + n, x): trả về con trỏ trỏ vào vị trí đầu tiên của phần tử lớn hơn hoặc bằng x.
+lower_bound(v.begin(), v.end(), x) : trả về iterator đến phần tử đầu tiên >= x;
+
+auto it = lower_bound(a, a + n, 6);
+cout << *it << endl;
+cout << it - a << endl;
+
+auto it = lower_bound(v.begin(), v.end(), 9);
+cout << *it << endl;
+cout << it - v.begin() << endl;
+
+upper_bound : vị trí đầu tiên của phần tử lớn hơn x;

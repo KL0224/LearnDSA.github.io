@@ -1,0 +1,555 @@
+HÀNG ĐỢI:
+1. Cơ chế hoạt động: FIFO
+2. Một số thao tác đối với hàng đợi:
+	+ push.
+	+ pop.
+	+ front.
+	+ empty.
+	+ size.
+	+ O(1)
+
+3. Khai báo : queue<kdl> name; // #include < queue>
+4. Lưu ý nếu stack rỗng thì nếu truy cập vào front hay pop sẽ bị runtime.
+5. Bài toán liên quan đến hàng đợi:
+a. Cho số tự nhiên n. In ra số nhị phân từ 1 đến n:
+
+vector<string> res;
+void binary()
+{
+	queue<string> q;
+	q.push("1");
+	res.push_back("1");
+	while(res.size() < 10000)
+	{
+		string top = q.front();
+		q.pop();
+		res.push_back(top + "0");
+		res.push_back(top + "1");
+		q.push(top + "0");
+		q.push(top + "1");
+	}
+}
+int main()
+{
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+	
+	binary();
+	int t; cin >> t;
+	while(t--)
+	{
+		int n; cin >> n;
+		rep(i, n)
+			cout << res[i] << " ";
+		cout << endl;
+	}
+
+	return 0;
+}
+
+Bài toán bội số chỉ chứa số 0 và số 9:
+
+vector<ll> res;
+ll ans[101];
+void boi09()
+{
+	queue<string> q;
+	q.push("9");
+	res.push_back(9);
+	while(1)
+	{
+		string top = q.front();
+		q.pop();
+		if(top.length() == 10) break;
+		res.push_back(stoll(top + "0"));
+		res.push_back(stoll(top + "9"));
+		q.push(top + "0");
+		q.push(top + "9");
+	}
+	rer(i, 1, 100)
+		for(ll x : res)
+			if(x % i == 0)
+			{
+				ans[i] = x;
+				break;
+			}
+}
+int main()
+{
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+	
+	boi09();
+	for(int i = 1; i <= 100; i++)
+	{
+		cout << i << " " << ans[i] << endl;
+	}
+	return 0;
+}
+
+Bài toán tìm tập lộc phát là số chỉ bao gồm 6 và 8. Tìm tất cả các số lộc phát có số chữ số là n.
+
+vector<string> res;
+void locphat()
+{
+	queue<string> q;
+	q.push("6");
+	q.push("8");
+	res.push_back("6");
+	res.push_back("8");
+	while(1)
+	{
+		string top = q.front();
+		q.pop();
+		if(top.length() >= 15) break;
+		res.push_back(top + "6");
+		res.push_back(top + "8");
+		q.push(top + "6");
+		q.push(top + "8");
+	}
+	reverse(res.begin(), res.end());
+}
+
+int main()
+{
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+	
+	locphat();
+	int t; cin >> t;
+	while(t--)
+	{
+		int n; cin >> n;
+		for(string s : res)
+			if(s.size() <= n)
+				cout << s << " ";
+		cout << endl;
+	}
+	
+	return 0;
+}
+
+Tìm đường đi ngắn nhất từ 1 đỉnh đến một đỉnh khác:
+
+int dx[4] = {-1, 0, 0, 1};
+int dy[4] = {0, -1, 1, 0};
+
+int a[1001][1001];
+int d[1001][1001]; // d[i][j] : lưu số bước đi tối thiểu từ start đến end
+pair<int, int> s, e;
+int n, m;
+
+void Input()
+{
+	cin >> n >> m;
+	cin >> s.first >> s.second >> e.first >> e.second;
+	for(int i = 0; i < n; i++)
+		for(int j = 0; j < m; j++)
+			cin >> a[i][j];
+	memset(d, 0, sizeof(d));
+}
+
+int Solve()
+{
+	queue<pair<int, int>> q;
+	q.push({s.first, s.second});
+	d[s.first][s.second] = 0;
+	while(!q.empty())
+	{
+		pair<int, int> top = q.front();
+		q.pop();
+		// Duyet 4 o xung quanh
+		int i = top.first;
+		int j = top.second;
+		for(int k = 0; k < 4; k++)
+		{
+			int i1 = i + dx[k];
+			int j1 = j + dy[k];
+			if(a[i1][j1] && i1 >= 0 && i1 < n && j1 >= 0 && j1 < m)
+			{
+				a[i1][j1] = 0;
+				if(i1 == e.first && j1 == e.second)
+					return d[i][j] + 1;
+				q.push({i1, j1});
+				d[i1][j1] = d[i][j] + 1;
+			}
+		}
+	}
+	return -1;
+}
+
+int main()
+{
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+	
+	int t; cin >> t;
+	while(t--)
+	{
+		Input();
+		if(a[s.first][s.second] && a[e.first][e.second])
+		{
+			cout << Solve() << endl;
+		}
+		else cout << "-1\n";
+	}
+	
+	return 0;
+}
+
+Bài toán in ra số thao tác ít nhất để biến đổi số s thành số t thông qua 2 thao tác - 1 và * 2:
+
+int Solve(int s, int t)
+{
+	queue<pair<int, int>> q;
+	set<int> se;
+	se.insert(s);
+	q.push({s, 0});
+	while(!q.empty())
+	{
+		pair<int, int> top = q.front();
+		q.pop();
+		if(top.first == t) return top.second;
+		if(top.first * 2 == t || top.first - 1 == t) return top.second + 1;
+		if(se.find(top.first * 2) == se.end() && top.first < t)
+		{
+			q.push({top.first * 2, top.second + 1});
+			se.insert(top.first * 2);
+		}
+		if(se.find(top.first - 1) == se.end() && top.first > 1)
+		{
+			q.push({top.first - 1, top.second + 1});
+			se.insert(top.first - 1);
+		}
+
+	}
+}
+
+int main()
+{
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+	
+	int t; cin >> t;
+	while(t--)
+	{
+		int s, t; cin >> s >> t;
+		cout << Solve(s, t) << endl;
+	}
+	
+	return 0;
+}
+
+Hàng đợi ưu tiên : priority_queue
+Cú pháp : priority_queue<int> q;
+Tự động sắp xếp trong queue này sẽ được sắp xếp theo thứ tự tăng dần hoặc giảm dần.
+Mặc định sẽ là lớn nhất, nếu muốn nhỏ nhất thì khai báo như sau: priority_queue<int, vector<int>, greater<int>> q;
+Một số hàm: 
+	1. push
+	2. top : lay phan tu dau
+	3. pop : xoa phan tu dau
+
+Bài tập nối dây tìm chi phí nối dây là nhỏ nhất:
+
+int t; cin >> t;
+	while(t--)
+	{
+		int n; cin >> n;
+		int a[n];
+		for(int &x : a) cin >> x;
+		priority_queue<int, vector<int>, greater<int>>pq;
+		for(int x : a) pq.push(x);
+		ll res = 0;
+		while(pq.size() > 1)
+		{
+			// Lay ra 2 soi day ngan nhat
+			ll top1 = pq.top(); pq.pop();
+			ll top2 = pq.top(); pq.pop();
+			res += top1 + top2;
+			pq.push(top1 + top2);
+		}
+		cout << res << endl;
+	}
+
+Bài toán giá trị nhỏ nhất của sâu:
+
+int main()
+{
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+
+	int t; cin >> t;
+	while(t--)
+	{
+		int k; cin >> k;
+		string s; cin >> s;
+		map<char, int> m;
+		for(char c : s)
+			m[c]++;
+		priority_queue<int> pq;
+		for(auto x : m)
+			pq.push(x.second);
+		while(k)
+		{
+			int top = pq.top();
+			pq.pop();
+			top--; k--;
+			pq.push(max(top, 0));
+		}
+		ll res = 0;
+		while(!pq.empty())
+		{
+			res += 1ll * pq.top() * pq.top();
+			pq.pop();
+		}
+		cout << res << endl;
+	}
+	
+}
+
+Hàng đợi 2 đầu : deque - double end queue
+Có thể push, pop ở cả 2 đầu.
+Một số thao tác:
+	1. size
+	2. push_front
+	3. push_back
+	4. pop_front
+	5. pop_back
+	6. empty
+	7. front : lấy ra phần tử ở đầu
+	8. back : lấy ra phần tử ở cuối
+
+Bài toán Sliding window maximum: 
+
+int main()
+{
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+
+	int n, k; cin >> n >> k;
+	int a[n];
+	for(int &x : a) cin >> x;
+	deque<int> dq;
+	for(int i = 0; i < k; i++)
+	{
+		while(!dq.empty() && a[i] > a[dq.back()])
+		{
+			dq.pop_back();
+		}
+		dq.push_back(i);
+	}
+	cout << a[dq.front()] << " ";
+	for(int i = k; i <= n - 1; i++)
+	{
+		if(dq.front() <= i - k)
+			dq.pop_front();
+		while(!dq.empty() && a[i] > a[dq.back()])
+			dq.pop_back();
+		dq.push_back(i);
+		cout << a[dq.front()] << " ";
+	}
+
+	return 0;
+}
+
+Cài đặt hàng đợi bằng mảng và danh sách liên kết:
+1. Mảng:
+#include <bits/stdc++.h>
+using namespace std;
+
+int a[100001], maxN = 100000;
+int n = 0;
+
+int size()
+{
+	return n;
+}
+
+bool empty()
+{
+	return n == 0;
+}
+
+void push(int x)
+{
+	if(n == maxN) return;
+	a[n] = x;
+	n++;
+}
+
+void pop()
+{
+	for(int i = 0; i < n - 1; i++)
+	{
+		a[i] = a[i + 1];
+	}
+	--n;
+}
+
+int front()
+{
+	return a[0];
+}
+
+int main()
+{
+	while(true)
+	{
+		cout << "========================\n";
+		cout << "1. push\n";
+		cout << "2. pop\n";
+		cout << "3. front\n";
+		cout << "4. size\n";
+		cout << "5. empty\n";
+		cout << "0. Thoat\n";
+		cout << "========================\n";
+		int chon; cin >> chon;
+		if(chon == 1)
+		{
+			int x; cout << "Nhap gia tri: "; cin >> x;
+			push(x);
+		}
+		else if(chon == 2)
+		{
+			pop();
+		}
+		else if(chon == 3)
+		{
+			if(n == 0) cout << "EMPTY\n";
+			else cout << front() << endl;
+		}
+		else if(chon == 4)
+			cout << size() << endl;
+		else if(chon == 5)
+			if(empty()) cout << "EMPTY\n";
+		else 
+			break;
+	}
+	return 0;
+}
+
+2. DSLK:
+
+#include <bits/stdc++.h>
+using namespace std;
+
+struct node
+{
+	int data;
+	node* next;
+};
+
+node* newNode(int x)
+{
+	node* newnode = new node();
+	newnode->data = x;
+	newnode->next = NULL;
+	return newnode;
+}
+
+void push(node *&que, int x)
+{
+	node *newnode = newNode(x);
+	if(que == NULL)
+	{
+		que = newnode;
+		return;
+	}
+
+	node* temp = que;
+	while(temp->next != NULL)
+	{
+		temp = temp->next;
+	}
+	temp->next = newnode;
+}
+
+void pop(node *&que)
+{
+	if(que == NULL) return;
+	node* temp = que;
+	que = que->next;
+	delete temp;
+}
+
+int size(node *que)
+{
+	int dem = 0;
+	while(que != NULL)
+	{
+		dem++;
+		que = que->next;
+	}
+	return dem;
+}
+
+bool empty(node* que)
+{
+	return que == NULL;
+}
+
+int front(node *que)
+{
+	return que->data;
+}
+
+void Printf(node* que)
+{
+	while(que != NULL)
+	{
+		cout << que->data << " ";
+		que = que->next;
+	}
+	cout << endl;
+}
+
+int main()
+{
+	node* que = NULL;
+	while(true)
+	{
+		cout << "========================\n";
+		cout << "1. push\n";
+		cout << "2. pop\n";
+		cout << "3. front\n";
+		cout << "4. size\n";
+		cout << "5. empty\n";
+		cout << "6. Duyet\n";
+		cout << "0. Thoat\n";
+		cout << "========================\n";
+		int chon; cin >> chon;
+		if(chon == 1)
+		{
+			int x; cout << "Nhap gia tri: "; cin >> x;
+			push(que, x);
+		}
+		else if(chon == 2)
+		{
+			pop(que);
+		}
+		else if(chon == 3)
+		{
+			if(que == NULL) cout << "EMPTY\n";
+			else cout << front(que) << endl;
+		}
+		else if(chon == 4)
+			cout << size(que) << endl;
+		else if(chon == 5)
+		{
+			if(empty(que)) cout << "EMPTY\n";
+			else cout << "NOT EMPTY\n";
+		}
+		else if(chon == 6)
+			Printf(que);
+		else 
+			break;
+	}
+	return 0;
+}

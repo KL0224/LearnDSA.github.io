@@ -1,0 +1,353 @@
+=============================== HASH TABLE =========================================
+I. Hash Table
+1. Bảng băm là một cấu trúc dữ liệu dùng để lưu trữ các cặp key, value sử dụng hàm băm để ánh xạ khóa thành một địa chỉ lưu trữ vào bảng băm h(k).
+2. Hàm băm tốt là hàm đảm bảo dễ tính toán, phân bố đều, các giá trị băm và ít xảy ra đụng độ.
+3. Hàm băm thường dùng là hàm chưa dư(modulo) 	h(k) = k % M, trong đó M là kích thước bản băm  (nên là số nguyên tố).
+4. Xử lí đụng độ:
+	* Đụng độ xảy ra khi hàm băm ánh xa hai giá trị khác nhau thành cùng địa chỉ trên bảng băm.
+	* Phương pháp xử lý đụng độ:
+		- Phương pháp liên kết: một địa chỉ của bảng băm dùng danh sách liên kết chưa các phần tử.
+			+ Nói kết trực tiếp(direct chaining).
+			+ Nối kết hợp nhất.
+		- Phương pháp địa chỉ mở(open addressing).
+5. Phương pháp nối kết:
+	* Mỗi địa chỉ bảng băm úng với một danh sách liên kết chứa các phần tử đụng đố.
+	* Trường hợp tốt nhất: các phần tử phân bố đều các địa chỉ thì độ phức tạp tìm kiếm một phần tử là O(1).
+	* Trường hợp xấu nhất: các phần tử cùng phân bố vào một địa chỉ nào đó thì độ phức tạp tìm kiếm một phần tử là O(n).
+******************Cài đặt*************************
+#include <bits/stdc++.h>
+using namespace std;
+
+struct node
+{
+	int key;
+	node* next;
+};
+
+#define M 7
+
+void initHastTable(node* head[])
+{
+	for(int i = 0; i < M; i++)
+	{
+		head[i] = NULL;
+	}
+}
+
+node* newNode(int x)
+{
+	node* newnode = new node;
+	newnode->key = x;
+	newnode->next = NULL;
+	return newnode;
+}
+
+int HashFunc(int key)
+{
+	return key % M;
+}
+
+void InsertNode(node *head[], int key)
+{
+	int index = HashFunc(key);
+	node* r = head[index];
+
+	node* prev = NULL;
+	while(r != NULL && r->key < key)
+	{
+		prev = r;
+		r = r->next;
+	}
+
+	node* p = newNode(key);
+	if(prev == NULL) // chen dau
+	{
+		head[index] = p;
+		p->next = r;
+	}
+	else
+	{
+		p->next = r;
+		prev->next = p;
+	}
+}
+
+void DeleteNode(node* head[], int key)
+{
+	int index = HashFunc(key);
+	node* r = head[index];
+
+	node* prev = NULL;
+	while(r != NULL && r->key != key)
+	{
+		prev = r;
+		r = r->next;
+	}
+
+	if(r == NULL) return;
+
+	if(prev == NULL)
+	{
+		head[index] = r->next;
+	}
+	else 
+	{
+		prev->next = r->next;
+	}
+	delete r;
+}
+node* Search(node *head[], int key)
+{
+	int index = HashFunc(key);
+	node* p = head[index];
+
+	while(p != NULL && p->key != key)
+		p = p->next;
+	return p;
+}
+
+void Print(node *head[])
+{
+	for(int i = 0; i < M; i++)
+	{
+		if(head[i] != NULL)
+		{
+			cout << "========== BUCKET " << i << " ==========\n";
+			node* p = head[i];
+			while(p != NULL)
+			{
+				cout << p->key << " ";
+				p = p->next;
+			}
+			cout << endl;
+		}
+	}
+}
+
+int main()
+{
+	node* head[M];
+	initHastTable(head);
+
+	InsertNode(head, 8);
+	InsertNode(head, 4);
+	InsertNode(head, 9);
+	InsertNode(head, 3);
+	InsertNode(head, 15);
+	InsertNode(head, 18);
+	InsertNode(head, 26);
+	InsertNode(head, 22);
+
+	Print(head);
+	if(Search(head, 30) != NULL)
+		cout << "Tim thay node\n";
+	else cout << "Khong tim thay node\n";
+
+	DeleteNode(head, 30);
+	DeleteNode(head, 3);
+	DeleteNode(head, 15);
+	DeleteNode(head, 26);
+	Print(head);
+	return 0;
+}
+
+6. Phương pháp nối kết hợp nhất:
+
+	* Sử dụng mảng danh sách đặc chứ M phần từ 0 -> M - 1
+	* Mỗi phần tử tong bảng băm chứa 2 thành phần:
+		- key : chứa giá trị phần tử.
+		- next : chứa vị trí phần tử kế tiếp khi xảy ra đụng độ
+
+Code:
+#include <bits/stdc++.h>
+using namespace std;
+#define M 7
+
+struct node
+{
+	int key;
+	int next;
+};
+
+struct HastTable
+{
+	node hash[M];
+	int r;
+};
+
+void init(HastTable &h)
+{
+	for(int i = 0; i < M; i++)
+	{
+		h.hash[i].key = -1;
+		h.hash[i].next = -1;
+	}
+
+	h.r = M - 1;
+}
+
+int Hash(int key)
+{
+	return key % M;
+}
+
+void InsertNode(HastTable &h, int key)
+{
+	if(h.r >= 0)
+	{
+		int index = Hash(key);
+		if(h.hash[index].key == -1)
+			h.hash[index].key = key;
+		else
+		{
+			h.hash[h.r].key = key;
+			while(h.hash[index].next != -1)
+				index = h.hash[index].next;
+			h.hash[index].next = h.r;
+		}
+		while(h.r >= 0 && h.hash[h.r].key >= 0)
+			h.r--;
+	}
+}
+
+int Search(HastTable h, int x)
+{
+	int index = Hash(x);
+
+	do
+	{
+		if(h.hash[index].key == x)
+			return index;
+		index = h.hash[index].next;
+	} while(index >= 0);
+
+	return -1;
+}
+
+void Print(HastTable h)
+{
+	for(int i = 0; i < M; i++)
+	{
+		if(h.hash[i].key >= 0)
+			cout << i << " : " << h.hash[i].key << " : " << h.hash[i].next << endl;
+	}
+}
+
+int main()
+{
+	HastTable h;
+	init(h);
+	InsertNode(h, 1);
+	InsertNode(h, 2);
+	InsertNode(h, 8);
+	InsertNode(h, 3);
+	InsertNode(h, 15);
+	InsertNode(h, 9);
+	InsertNode(h, 63);
+
+	cout << Search(h, 15) << endl;
+
+	Print(h);
+	return 0;
+}
+
+7. Phương pháp thăm dò:
+	* Dò tuyến tính(Linear) : h(k, i) = (h(k) + i) modulo M
+	* Dò bậc 2(Quadractic) : h(k, i) = (h(k) + i*i) modulo M
+	* Băm kép(Double) : h(k, i) = (h1(k) + i*h2(k)) modulo M
+
+Code:
+
+#include <iostream>
+using namespace std;
+#define M 7
+
+struct HashTable
+{
+	int size;
+	int n;
+	int h[M];
+};
+
+int Hash(int key, int i)
+{
+	return ((key % M) + i) % M;
+}
+
+void init(HashTable &hash)
+{
+	hash.size = M;
+	hash.n = 0;
+	for(int i = 0; i < M; i++)
+	{
+		hash.h[i] = -1;
+	}
+}
+
+void Insert(HashTable &hash, int key)
+{
+	if(hash.n >= hash.size) return;
+	hash.n++;
+	int i = 0;
+	int index = Hash(key, i);
+	if(hash.h[index] == -1) 
+	{
+		hash.h[index] = key;
+		return;
+	}
+
+	while(hash.h[index] != -1)
+	{
+		++i;
+		index = Hash(key, i);
+	}
+
+	hash.h[index] = key;
+}
+
+bool Search(HashTable hash, int key)
+{
+	int i = 0;
+	int index = Hash(key, i);
+
+	while(hash.h[index] != -1 && i <= hash.size - 1)
+	{
+		if(hash.h[index] == key)
+			return true;
+		++i;
+		index = Hash(key, i);
+	}
+	return false;
+}
+
+void Printf(HashTable hash)
+{
+	for(int i = 0; i < hash.size; i++)
+	{
+		if(hash.h[i] != -1)
+			cout << i << " : " << hash.h[i] << endl;
+	}
+}
+
+int main()
+{
+	HashTable h;
+	init(h);
+
+	Insert(h, 1);
+	Insert(h, 2);
+	Insert(h, 8);
+	Insert(h, 9);
+	Insert(h, 10);
+	Insert(h, 3);
+	Insert(h, 15);
+	Insert(h, 4);
+
+	Printf(h);
+
+	if(Search(h, 4)) cout << "Tim thay phan tu\n";
+	else cout << "Khong tim thay phan tu\n";
+	
+	return 0;
+}
+

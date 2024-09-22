@@ -1,0 +1,266 @@
+1. Hai con trỏ:
+Cho 2 mảng tăng dần. In ra một mảng tăng dần từ 2 mảng : O(m + n)
+	int n, m; 
+	cin >> n >> m;
+	int a[n], b[m];
+	for(int i = 0; i < n; i++)
+	{
+		cin >> a[i];
+	}
+	for(int i = 0; i < m; i++)
+	{
+		cin >> b[i];
+	}
+
+	int i = 0, j = 0;
+	while(i < n && j < m)
+	{
+		if(a[i] <= b[j])
+		{
+			cout << a[i] << " ";
+			i++;
+		}
+		else 
+		{
+			cout << b[j] << " ";
+			j++;
+		}
+	}
+
+	while(i < n)
+	{
+		cout << a[i] << " ";
+		i++;
+	}
+	while(j < m)
+	{
+		cout << b[j] << " ";
+		j++;
+	}
+	return 0;
+
+Cho 2 mảng tăng dần là a và b.
+Kiểm tra xem mỗi phần tử của b sẽ lớn hơn bao nhiêu phần tử của a.
+	int i = 0, j = 0;
+	while(i < n && j < m)
+	{
+		if(a[i] >= b[j])
+		{
+			cout << i << " ";
+			j++;
+		}
+		else 
+		{
+			i++;
+		}
+	}
+
+	while(j < m)
+	{
+		cout << i << endl;
+		j++;
+	}
+
+Cho 2 mảng tăng dần là a và b.
+Kiểm tra xem mỗi phần tử trong a xuất hiện bao nhiêu lần trong b và tính tổng số lần xuất hiện của tất cả phần tử.
+	int dem = 0, i = 0, j = 0;
+	while(i < n && j < m)
+	{
+		if(a[i] < b[j])
+		{
+			i++;
+			continue;
+		}
+		else if(a[i] > b[j])
+		{
+			j++;
+			continue;
+		}
+		int dem1 = 0, dem2 = 0;
+		while(i < n && a[i] == b[j])
+		{
+			dem1++;
+			i++;
+		}
+		while(j < m && b[j] == a[i - 1])
+		{
+			dem2++;
+			j++;
+		}
+		dem += dem1 * dem2 * 1ll;
+	}
+	
+	cout << dem << endl;
+
+Tìm mảng con lớn nhất mà tổng của nó nhỏ hơn hoặc bằng s và trả về độ dài của nó.
+	int n, s; cin >> n >> s;
+	std::vector<int> v(n);
+	for(int i = 0; i < n; i++)
+		cin >> v[i];
+
+	int length = 0;
+	ll sum = 0;
+	int l = 0, r;
+	for(r = 0; r < n; r++)
+	{
+		sum += v[r];
+		while(sum > s)
+		{
+			sum -= v[l];
+			l++;
+		}
+		length = max(length, r - l + 1);
+	}
+	
+	cout << length << endl;
+	return 0;
+	}
+
+Tìm mảng con ngắn nhất mà tổng của nó lớn hơn hoặc bằng s.
+	int n, s; cin >> n >> s;
+	std::vector<int> v(n);
+	for(int i = 0; i < n; i++)
+		cin >> v[i];
+
+	int length = 1e9;
+	ll sum = 0;
+	int l = 0, r;
+	for(r = 0; r < n; r++)
+	{
+		sum += v[r];
+		while(sum >= s)
+		{
+			length = min(length, r - l + 1);
+			sum -= v[l];
+			l++;
+		}
+		
+	}
+	if(length == 1e9) length = -1;
+	cout << length << endl;
+	return 0;
+
+Segment with small sum: Tìm số lượng mảng con nhỏ hơn hoặc bằng s.
+Mảng cộng dồn:
+	int n, s; cin >> n >> s;
+	std::vector<int> v(n + 1);
+	v[0] = 0;
+	for(int i = 1; i <= n; i++)
+	{
+		cin >> v[i];
+	}
+	std::vector<int> b(n + 1);
+	for(int i = 0; i <= n; i++)
+	{
+		if(i <= 1) b[i] = v[i];
+		else b[i] = v[i] + b[i - 1];
+	}
+
+	int l = 0;
+	int count = 0;
+	for(int r = 0; r <= n; r++)
+	{
+		while(b[r] - b[l] > s)
+		{
+			l++;
+		}
+		
+		count = count + r - l;
+	}
+	cout << count << endl;
+
+Không mảng cộng dồn:
+	int n, s; cin >> n >> s;
+	std::vector<int> a(n);
+	for(int i = 0; i < n; i++)
+	{
+		cin >> a[i];
+	}
+	int l = 0, r;
+	long long sum = 0;
+	long long res = 0;
+	for(r = 0; r < n; r++)
+	{
+		sum += a[r];
+		while(sum > s)
+		{
+			sum -= a[l];
+			l++;
+		}
+		res += r - l + 1;
+	}
+	cout << res << endl;
+
+Segment with big sum: Tìm số lượng mảng con có tổng lớn hơn hoặc bằng s.
+	int n, s; cin >> n >> s;
+	std::vector<int> a(n);
+	for(int i = 0; i < n; i++)
+	{
+		cin >> a[i];
+	}
+	int l = 0, r;
+	long long sum = 0;
+	long long res = 0;
+	for(r = 0; r < n; r++)
+	{
+		sum += a[r];
+		while(sum >= s)
+		{
+			res += n - r;
+			sum -= a[l];
+			l++;
+		}
+		
+	}
+	cout << res << endl;
+
+Đếm xem trong mảng có bao nhiêu mảng con có số phần tử nhỏ hơn hoặc bằng k cho trước.
+	int n, k; cin >> n >> k;
+	std::vector<int> a(n);
+	for(int i = 0; i < n; i++)
+	{
+		cin >> a[i];
+	}
+	int dem[10001] = {0};
+	int l = 0, r;
+	int count = 0;
+	long long res = 0;
+	for(r = 0; r < n; r++)
+	{
+		dem[a[r]]++;
+		if(dem[a[r]] == 1) count++;
+		while(count > k)
+		{
+			if(dem[a[l]] == 1) count--;
+			dem[a[l]]--;
+			l++;
+		}
+		res += r - l + 1;
+	}
+	cout << res << endl;
+
+Đếm trong mảng có bao nhiêu mảng con có độ chênh lệch giữa min và max nhỏ hoặc bằng k.
+	int n, k; cin >> n >> k;
+	std::vector<int> a(n);
+	for(int i = 0; i < n; i++)
+	{
+		cin >> a[i];
+	}
+	long long res = 0;
+	multiset<long long> ms;
+	int l = 0, r;
+	for(r = 0; r < n; r++)
+	{
+		ms.insert(a[r]);
+		while(*ms.rbegin() - *ms.begin() > k)
+		{
+			auto it = ms.find(a[l]);
+			ms.erase(it);
+			l++;
+		}
+		res += r - l + 1;
+	}
+	cout << res << endl;
+
+Two Sum: In ra vị trí của 2 phần tử có tổng là s
+

@@ -1,0 +1,211 @@
+Bài tập yêu cầu: 
+	int n; cin >> n;
+	int a[n];
+	for(int i = 0; i < n; i++)
+	{
+		cin >> a[i];
+	}
+
+	int x; cin >> x;
+	auto x1 = lower_bound(a, a + n, x);
+	if(x1 != a + n)
+		cout << x1 - a << endl;
+	else 
+		cout << -1 << endl;
+
+	auto x2 = upper_bound(a, a + n, x);
+	if(x2 != a + n)
+		cout << x2 - a << endl;
+	else 
+		cout << -1 << endl;
+
+	int p1 = -1, p2 = -1;
+	if(*x1 == x) p1 = x1 - a;
+	x2--;
+	if(*x2 == x) p2 = x2 - a;
+	cout << p1 << " " << p2 << endl;
+	if(p1 != -1)
+		cout << p2 - p1 + 1 << endl;
+
+String:
+1. Nhập, xuất:
+	int n; cin >> n; khi cin thì nó sẽ còn 1 dấu xuống dòng.
+	cin.ignore(); // xóa dấu xuống dòng
+	string s, t;
+	getline(cin, s); // nhập được dấu cách và ngừng lại khi gặp dấu xuống dòng.
+	getline(cin, t);
+	cout << n << endl;
+	cout << s << endl;
+	cout << t << endl;
+	cout << s.size() << endl;
+
+Sâu nhiều dòng:
+	string res = "";
+	string s;
+	while(getline(cin, s))
+	{
+		res += s + "\n";
+	}
+
+	cout << res<< endl;
+Đọc từng từ từ sâu nhập vào:
+	string res = "";
+	string s;
+	while(getline(cin, s))
+	{
+		res += s + "\n";
+	}
+
+	cout << res<< endl;
+Duyệt chuỗi:
+	string s = "Hoc lap trinh OOOP";
+	cout << s << endl;
+	for(char x : s)
+	{
+		cout << x << " ";
+	}
+	cout << endl;
+	for(int i = 0; i < s.size(); i++)
+	{
+		cout << s[i] << " ";
+	}
+	cout << endl;
+	for(auto it = s.begin(); it < s.end() ;it++)
+	{
+		cout << *it << " ";
+	}
+	cout << endl;
+Push_back(thêm kí tự cuối) và pop_back(xóa kí tự cuối):
+	string s = "Hello anh em";
+	s.push_back('@');
+	cout << s << endl;
+	s.pop_back();
+	cout << s << endl;
+Insert:
+	string s = "Hello anh em";
+	s.insert(2, "vui nha");
+	cout << s << endl;
+erase:
+Xóa từ vị trí:
+	string s = "Helloanhem";
+	s.erase(2);
+	cout << s << endl;
+Xóa từ vị trí kèm số lượng kí tự:
+	string s = "Helloanhem";
+	s.erase(2, 5);
+	cout << s << endl;
+
+Find: tìm chuỗi con trong chuỗi và trả về chỉ số đầu của chuỗi con nếu tìm thấy.
+	string s = "Helloanhem";
+	string t = "emt";
+	if(s.find(t) != string::npos)
+	{
+		cout << s.find(t) << endl;
+	}
+	else
+	{
+		cout << "NOT FOUND";
+	}
+Nối chuỗi:
+	string s = "Hello";
+	string t = "anh";
+	string w = "em";
+	s = s + " " + t + " " + w;
+	s += 'a';
+	cout << s;
+So sánh:
+	string s = "Hello";
+	string t = "anh";
+	if(s < t) cout << "HELLO";
+In hoa: hàm toupper('a') trả về số nguyên mã ACSII của A => 65
+	void inhoa(string& s)
+	{
+		for(int i = 0; i < s.size(); i++)
+		{
+			s[i] = toupper(s[i]);
+		}
+	}
+
+In thường: hàm tolower('A') trả về số nguyên mã ACSII của a => 97
+	void inthuong(string& s)
+	{
+		for(int i = 0; i < s.size(); i++)
+		{
+			s[i] = tolower(s[i]);
+		}
+	}
+
+Chuyển sâu thành số: stoi(s) cho int, còn stoll(s) là long long, stod(s) cho double
+	string s = "-17323750";
+	int n = stoi(s);
+	cout << n << endl; // -17323750
+	nếu gặp chữ trong chuỗi thì sẽ ngừng lại
+	string s = "-1732a3750";
+	int n = stoi(s);
+	cout << n << endl; // -1732
+	string s = "1479247923750.7397502357025";
+	double d = stod(s);
+	cout << fixed << setprecision(7) << d << endl;
+Chuyển số thành sau: to_string(n);
+	int n = 100000;
+	string s = to_string(n);
+	cout << s << endl;
+Tách sâu:
+	string s = "Hello anh em";
+	string t = s.substr(6);
+	cout << t << endl;
+	string w = s.substr(6, 3);
+	cout << w << endl;
+Tách từng từ trong chuỗi:
++ Dấu cách:
+	string s = "Hello  anh  em   nhieu nha";
+	stringstream ss(s);
+	string temp;
+	while(ss >> temp)
+	{
+		cout << temp << endl;
+	}
++ Dấu chấm hoặc dấu khác thì cứ chuyển hết về dấu cách:
+	string s = "Hello  .anh.em . em .nhieu. nha";
+	for(int i = 0; i < s.size(); i++)
+	{
+		if(s[i] =='.')
+		{
+			s[i] = ' ';
+		}
+	}
+	stringstream ss(s);
+	string temp;
+	while(ss >> temp)
+	{
+		cout << temp << endl;
+	}
+Sắp xếp từ trong chuỗi:
+	string s;
+	getline(cin, s);
+	stringstream ss(s);
+	vector<string> v;
+	string temp;
+	while(ss >> temp)
+	{
+		v.push_back(temp);
+	}
+
+	sort(v.begin(), v.end(), greater<string>());
+	for(auto x : v)
+	{
+		cout << x << endl;
+	}
+Hoặc:
+	string s;
+	while(cin >> s)
+	{
+		v.push_back(temp);
+	}
+
+	sort(v.begin(), v.end(), greater<string>());
+	for(auto x : v)
+	{
+		cout << x << endl;
+	}
+

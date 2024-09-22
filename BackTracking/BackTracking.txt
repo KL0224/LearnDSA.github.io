@@ -1,0 +1,158 @@
+Quay lui: xây dựng cấu hình từ x1 đến xn.
+Mô hình bài toán quay lui:	
+Try(int i)
+{
+	for(j = <Khả năng 1>; j <= <Khả năng M>; j++)
+	{
+		if(<chấp nhân khả năng j>)
+			X[i] = <khả năng j>;
+		if(i == n)
+			<Thông báo cấu hình tìm được>
+		else
+			Try(i + 1);
+	}
+}
+
+Bài toán quay lui xâu nhị phân có độ dài n:
+// Khả năng mà bit i có thể nhận được là 0 và 1.
+Mã giả:
+void Try(int i)
+{
+	for(int j = 0; i <= j; j++)
+	{
+		X[i] = j;
+		if(i == n)
+			Inkq();
+		else Try(i + 1);
+	}
+}
+
+Bài toán sinh ra xâu tổ hợp chập k của n: cấu hình X1, X2...Xk.
+
+// Khả năng lớn nhất là N - K + i;
+// Khả năng nhỏ nhất là [X - 1] + 1;
+void Inkq()
+{
+	for(int i = 1; i <= K; i++)
+		cout << X[i];
+	cout << endl;
+}
+
+Try(int i )
+{
+	for(int j  = [X - 1] + 1; j <= N - K + i; j++)
+	{
+		X[i] = i; // Cho i chấp nhận khả năng j
+		if(i == K)
+			Inkq();
+		else Try(i + 1);
+	}
+}
+
+cin >> N >> K;
+Try(1);
+
+Bài toán quay lui hoán vị của n phần tử:
+int N, X[100], used[100];
+
+void Inkq()
+{
+	for(int i = 1; i <= N; i++)
+		cout << X[i];
+	cout << endl;
+}
+void Try(int i)
+{
+	for(int j = 1; j <= N; j++)
+	{
+		if(used[j] == 0) // Kiểm tra xem i có khả năng i hay không.
+		{
+			used[j] = 1;
+			X[i] = j; 
+			if(i == N) Inkq();
+			else Try(i + 1);
+			used[j] = 0;
+		}
+	}
+}
+
+Bài toán N queen: sắp xếp N quân hậu vào N hàng trên bàn cờ vưa N*N sao cho không có 2 quân hậu nào ăn nhau. Gọi X = (X1, X2,..., XN) là một nghiệm của bài toán, nếu Xi = j thì có nghĩa là xếp quân hậu hàng thứ i vào vị trí cột j.
+Con hậu nằm ở vị trí i, j thì nó sẽ quản lý:
+- Hàng i. (chưa cần xét).
+- Cột j.
+- Các đường chéo xuôi được đánh các chỉ số từ 1 đến 2*n - 1. Ô (i, j) bị đường chéo i - j + n quản lý.
+- Các đường chéo ngược được đánh các chỉ số từ 1 đến 2*n - 1. Ô (i, j) bị đường chéo i + j - 1 quản lý.
+
+Sử dụng mảng cot[], d1[], d2[] để đáng dấu cột, đường chéo xuôi và đường chéo ngược.
+X[i] = j : cot[j] = 1, d1[i - j + n] = 1, d2[i + j - 1] == 1;
+
+void Try(int i)
+{
+	for(int j = 1; j <= N; j++)
+	{
+		if(cot[j] == 1 && d1[i - j + N] == 1 && d2[i + j - 1] == 1)
+		{
+			cot[j] = d[i - j + N] = d2[i + j - 1] = 0;
+			X[i] = j;
+			if(i == N)
+				Inkq();
+			else Try(i + 1);
+			cot[j] = d1[i - j +N] = d2[i + j - 1] = 1;
+		}
+	}
+}
+
+int N, X[100], cot[100], d1[100], d2[100];
+int a[100][100];
+int cnt = 0;
+
+void Inkq()
+{
+	memset(a, 0, sizeof(a));
+	for(int i = 1; i <= N; i++)
+	{
+		a[i][X[i]] = 1;
+	}
+
+	for(int i = 1; i <= N; i++)
+	{
+		for(int j = 1; j <= N; j++)
+		{
+			cout << a[i][j];
+		}
+		cout << endl;
+	}
+	cout << endl;
+}
+void Try(int i)
+{
+	for(int j = 1; j <= N; j++)
+	{
+		if(cot[j] == 1 && d1[i - j + N] == 1 && d2[i + j - 1] == 1)
+		{ 
+			X[i] = j;
+			cot[j] = d1[i - j + N] = d2[i + j - 1] = 0;
+			if(i == N) 
+				{
+					cnt++;
+					//Inkq();
+				}
+			else Try(i + 1);
+			cot[j] = d1[i - j + N] = d2[i + j - 1] = 1;
+		}
+	}
+}
+
+int main()
+{
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+	cin >> N;
+	for(int i = 1; i <= 99; i++)
+		cot[i] = d1[i] = d2[i] = 1;
+	Try(1);
+	cout << cnt << endl;
+
+	return 0;
+}

@@ -1,0 +1,375 @@
+1. Selection sort: Sắp xếp chọn
+Độ phức tạp : O(n^2).
+Ý tưởng: Duyệt qua từng phần tử của mảng và tại phần tử thứ i, thiết lập vị trí min_pos ban đầu là i, sau đó kiểm tra xem mảng sau phần tử i, phần tử nào nhỏ nhất thì sẽ reset lại min_pos là nó và swap 2 thằng thứ i và min_pos.
+Code: 
+Sắp xếp mảng tăng dần:
+void SelectionSort(int a[], int n)
+{
+	for(int i = 0; i < n - 1; i++)
+	{
+		int min = i;
+		for(int j = i + 1; j < n; j++)
+		{
+			if(a[j] < a[min])
+			{
+				min = j;
+			} 
+		}
+		swap(a[i], a[min]);
+	}
+}
+Sắp xếp mảng giảm dần:
+void SelectionSort(int a[], int n)
+{
+	for(int i = 0; i < n - 1; i++)
+	{
+		int min = i;
+		for(int j = i + 1; j < n; j++)
+		{
+			if(a[j] > a[min])
+			{
+				min = j;
+			} 
+		}
+		swap(a[i], a[min]);
+	}
+}
+
+2. BubbleSort : Sắp xếp nổi bọt
+Độ phức tạp : O(n^2)
+Ý tưởng : Duyệt từ vị trí i = 1 dến vị trí mà mảng chưa được sắp xếp, sau đó thì swap 2 thằng cạnh nhau nếu nó nghịch thế. Qua mỗi vòng lặp thì nó sẽ có được phần tử lớn nhất ở cuối dãy.
+Code: 
+Tăng dần:
+void BubbleSort(int a[], int n)
+{
+	for(int i = 0; i < n - 1; i++)
+	{
+		for(int j = 0; j < n - i - 1; j++)
+			if(a[j] > a[j + 1])
+				swap(a[j], a[j + 1]);
+	}
+}
+Giảm dần:
+void BubbleSort(int a[], int n)
+{
+	for(int i = 0; i < n - 1; i++)
+	{
+		for(int j = 0; j < n - i - 1; j++)
+			if(a[j] < a[j + 1])
+				swap(a[j], a[j + 1]);
+	}
+}
+
+3. InsertSort: Sắp xếp chèn
+Ý tưởng : Duyệt các phần tử từ 1 đến n - 1 tại mỗi vị trí, ta lưu giá trị tại vị trí đó và dùng biến pos để duyệt các phần tử đúng trước nó, miễn là pos >= 0 và a[pos] > giá trị cần chèn thì a[pos + 1] = a[pos] và pos--, đến khi vòng lặp kết thúc thì ta sẽ gán cho a[pos + 1] = giá trị
+Độ phức tap: O(n^2)
+Tăng dần:
+void InsertSort(int a[], int n)
+{
+	for(int i = 1; i < n; i++)
+	{
+		int temp = a[i];
+		int pos = i - 1;
+		while(pos >= 0 && temp < a[pos])
+		{
+			a[pos + 1] = a[pos];
+			pos--;
+		}
+		a[pos + 1] = temp;
+	}
+}
+Giảm dần:
+void InsertSort(int a[], int n)
+{
+	for(int i = 1; i < n; i++)
+	{
+		int temp = a[i];
+		int pos = i - 1;
+		while(pos >= 0 && temp > a[pos])
+		{
+			a[pos + 1] = a[pos];
+			pos--;
+		}
+		a[pos + 1] = temp;
+	}
+}
+4. CountingSort : Sắp xếp đếm 
+Ý tưởng: Đếm số lượng phần tử xuất hiện trong mảng rồi in ra theo thứ tự tăng dần.
+Độ phức tạp : O(n + max)
+Bất lợi:
++ Giá trị từ 0 đến 10^7
+Code:
+	int maxx = -1;
+	for(int i = 0; i < n; i++)
+	{
+		cin >> a[i];
+		cnt[a[i]]++;
+		maxx = max(maxx, a[i]);
+	}
+	
+	for(int i = 0; i <= maxx; i++)
+	{
+		if(cnt[i] != 0)
+			for(int j = 0; j < cnt[i]; j++)
+				cout << i << " ";
+	}
+5. QuickSort: Sắp xếp nhanh.
+Độ phức tạp:
+	+ Trung bình : O(nlogn)
+	+ Xấu : O(n^2)
+Ý tưởng: Chia để trị = phân hoạch mảng từ chỉ số l đến r thành 2 phần và tiến hành sắp xếp dựa trên a[q] với q là vị trí phân hoạch. 
+Phân hoạch Lomuto: chọn pivot là phần tử cuối. 
+Code:
+int patition(int a[], int l, int r)
+{
+	int pivot = a[r];
+	int i = l - 1;
+	for(int j = l; j < r; j++)
+	{
+		if(a[j] < pivot)
+		{
+			i++;
+			swap(a[j], a[i]);
+		}
+	}
+	i++;
+	swap(a[i], a[r]);
+	return i;
+}
+
+void QuickSort(int a[], int l, int r)
+{
+	if(l < r) // l >= r : return
+	{
+		int p = patition(a, l, r);
+		QuickSort(a, l, p - 1);
+		QuickSort(a, p + 1, r);
+	}
+}
+
+Phân hoạch Hoare:
+int partition(int a[], int l, int r)
+{
+	int pivot = a[l];
+	int i = l - 1, j = r + 1;
+	while(1)
+	{
+		do
+		{
+			i++;
+		} while(a[i] < pivot);
+
+		do
+		{
+			j--;
+		} while(a[j] > pivot);
+		if(i < j)
+			swap(a[i], a[j]);
+		else return j;
+	}
+}
+
+void QuickSort(int a[], int l, int r)
+{
+	if(l < r)
+	{
+		int p = partition(a, l, r);
+		QuickSort(a, l, p);
+		QuickSort(a, p + 1, r);
+	}
+}
+
+QuickSort de quy:
+void QuickSort(int a[], int l, int r)
+{
+    int p = a[(l + r) / 2];
+    int i = l, j = r;
+    while(i < j)
+    {
+	    while(a[i] < p)
+	    {
+	        i++;
+	    }
+	    while(a[j] > p)
+	    {
+	        j--;
+	    }
+
+	    if(i <= j)
+	    {
+	        swap(a[i], a[j]);
+	        i++;
+	        j--;
+	    }
+    }
+    if(i < r)
+    {
+        QuickSort(a, i, r);
+    }
+    if(l < j)
+    {
+        QuickSort(a, l, j);
+    }
+}
+
+Merge Sort : Sắp xếp trộn : Chia để trị.
+Độ phức tạp : O(nlogn).
+Ý tưởng : Chia mảng cho đến khi còn 1 phần tử, sau đó trộn các dãy đã chia lại với nhau.
+Code:
+void Merge(int a[], int l, int m, int r)
+{
+	vector<int> x(a + l, a + m + 1);
+	vector<int> y(a + m + 1, a + r + 1);
+	int i = 0, j = 0;
+	while(i < x.size() && j < y.size())
+	{
+		if(x[i] <= y[j])
+		{
+			a[l] = x[i];
+			i++;
+			l++;
+		}
+		else 
+		{
+			a[l] = y[j];
+			j++;
+			l++;
+		}
+	}
+
+	while(i < x.size())
+	{
+		a[l] = x[i];
+		i++;
+		l++;
+	}
+
+	while(j < y.size())
+	{
+		a[l] = y[j];
+		j++;
+		l++;
+	}
+}
+
+void MergeSort(int a[], int l, int r)
+{
+	if(l < r)
+	{
+		int m = (l + r) / 2;
+		MergeSort(a, l, m);
+		MergeSort(a, m + 1, r);
+		Merge(a, l, m, r);
+	}
+}
+
+Bài toán đếm số cặp nghịch thế: a[i] > a[j] trong khi i < j.
+Code:
+int Merge(int a[], int l, int m, int r)
+{
+	vector<int> x(a + l, a + m + 1);
+	vector<int> y(a + m + 1, a + r + 1);
+	int i = 0, j = 0, cnt = 0;
+	while(i < x.size() && j < y.size())
+	{
+		if(x[i] <= y[j])
+		{
+			a[l] = x[i];
+			i++;
+			l++;
+		}
+		else 
+		{
+			cnt += x.size() - i;
+			a[l] = y[j];
+			j++;
+			l++;
+		}
+	}
+
+	while(i < x.size())
+	{
+		a[l] = x[i];
+		i++;
+		l++;
+	}
+
+	while(j < y.size())
+	{
+		a[l] = y[j];
+		j++;
+		l++;
+	}
+	return cnt;
+}
+
+int MergeSort(int a[], int l, int r)
+{
+	int dem = 0;
+	if(l < r)
+	{
+		int m = (l + r) / 2;
+		dem += MergeSort(a, l, m);
+		dem += MergeSort(a, m + 1, r);
+		dem += Merge(a, l, m, r);
+	}
+	return dem;
+}
+
+HeapSort : Sắp xếp vun đống.
+* Cây nhị phân hoàn chỉnh nếu các level của cây đều được điền đầy từ trên xuống dưới và từ trái qua phải. Tất cả các phần tử lá đều nguyên về bên trái và có thể phần tử cuối cùng có thể không có anh em với nó.
+* Xây dựng cây nhị phân từ mảng:
+	- Node i :
+		- Left : 2i + 1
+		- Right : 2i + 2
+	- Tìm ra node cha : (i - 1)/2
+	- Node cha >= con trái và con phải : Max Heap
+	- Node cha <= con trái và con phải : Min Heap
+Xây dựng thuật toán HeapSort thông qua Max Heap:
+void heapify(int a[], int n, int i)
+{
+	int largest = i;
+	int left = 2 * i + 1;
+	int right = 2 * i + 2;
+
+	// Max heap thì > còn min heap thì  <
+	if(left < n && a[left] > a[largest])
+		largest = left;
+	if(right < n && a[right] > a[largest])
+		largest = right;
+	if(largest != i)
+	{
+		swap(a[largest], a[i]);
+		heapify(a, n, largest);
+	}
+}
+
+void HeapSort(int a[], int n)
+{
+	for(int i = n / 2 - 1; i >= 0; i--)
+		heapify(a, n, i);
+	for(int i = n - 1; i >= 0; i--)
+	{
+		swap(a[0], a[i]);
+		heapify(a, i, 0);
+	}
+}
+
+int main()
+{
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+	
+	int n = 100;
+	int a[1000];
+	srand(time(NULL));
+	for(int i = 0; i < n; i++)
+		a[i] = rand() % 500;
+
+	HeapSort(a, n);
+	for(int i = 0; i < n; i++)
+		cout << a[i] << " ";
+
+	return 0;
+}

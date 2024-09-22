@@ -1,0 +1,400 @@
+1.Bài toán xâu nhị phân kế tiếp:
+- Cấu trúc đầu tiên. 
+- Cấu trúc cuối cùng.
+
+Khai báo cấu trúc đầu tiên.
+while(khi chưa phải là cấu hình cuối cùng)
+{
+	In ra cấu hình đầu tiên.
+	Sinh ra cấu hình tiếp theo.
+}
+
+Cộng bit: 
+0 + 0 = 0
+1 + 0 = 0 + 1 = 1
+1 + 1 = 0, nhớ 1.
+
+Code:
+int n, a[100], final;
+void KhoiTao()
+{
+	for(int i = 1; i <= n; i++)
+		a[i] = 0;
+}
+
+void Sinh()
+{
+	int i = n;
+	while(i >= 1 && a[i] == 1)
+	{
+		a[i] = 0;
+		i--;
+	}
+	if(i == 0)
+	{
+		final = 0; // Đây là cấu hình cuối cùng
+	}
+	else
+	{
+		a[i] = 1;
+	}
+}
+
+int main()
+{
+	cin >> n;
+	final = 1;
+	KhoiTao();
+	while(final)
+	{
+		for(int i = 1; i <= n; i++)
+			cout << a[i];
+		cout << endl;
+		Sinh();
+	}
+	return 0;
+}
+
+Sâu nhị phân có k bit 1: tạo hàm check.
+bool check(int k)
+{
+	int cnt = 0;
+	for(int i = 1; i <= n; i++)
+	{
+		if(a[i] == 1) cnt++;
+	}
+	return cnt == k;
+}
+
+
+Sinh xâu nhị phân kế tiếp qua string:
+
+string s;
+void Sinh()
+{
+	 int i = s.length() - 1;
+	 while(i >= 0 && s[i] == '1')
+	 {
+	 	s[i] = '0';
+	 	i--;
+	 }
+	 if(i != -1)
+	 	s[i] = '1';
+
+	 cout << s << endl;
+}
+
+int main()
+{
+	int t; cin >> t;
+	while(t--)
+	{
+		cin >> s;
+		Sinh();
+	}
+
+	return 0;
+}
+
+Sinh xâu AB:
+
+int n, final;
+char c[1001];
+void Sinh()
+{
+	int i = n;
+	while(i >= 1 && c[i] == 'B')
+	{
+		c[i] = 'A';
+		i--;
+	}
+	if(i == 0)
+	{
+		final = 0;
+	}
+	else
+	{
+		c[i] = 'B';
+	}
+
+}
+
+int main()
+{
+	memset(c, 'A', sizeof(c));
+	int t; cin >> t;
+	while(t--)
+	{
+		final = 1;
+		cin >> n;
+		while(final)
+		{
+			rer(i, 1, n)
+				cout << c[i];
+			cout << " ";
+			Sinh();
+		}
+		cout << endl;
+	}
+
+	return 0;
+}
+
+2.Bài toán sinh ra tổ hợp chập k của n:
+Ví dụ n = 5 và k = 3: 123 124 125 135 134 145 234 235 245 345
+Cấu hình đầu: 123
+Cấu hình cuối: 345
+Tại vị trí i : 
+Max = n - k + i (i <= k)
+
+int n, k, a[100], final;
+void KhoiTao()
+{
+	rer(i, 1, k)
+		a[i] = i;
+}
+
+void Sinh()
+{
+	int i = k;
+	while(i >= 1 && a[i] == n - k + i)
+	{
+		i--;
+	} 
+
+	if(i == 0) final = 0;
+	else
+	{
+		a[i]++;
+		rer(j, i + 1, k)
+			a[j] = a[j - 1] + 1;
+	}
+}
+
+int main()
+{
+	cin >> n >> k;
+	final = 1;
+	KhoiTao();
+	while(final)
+	{
+		rer(i, 1, k)
+			cout << a[i];
+		cout << endl;
+		Sinh();
+	}
+	
+	return 0;
+}
+
+Sinh ra tổ hợp chập k của n tiếp theo:
+
+int n, k, a[1001];
+void Sinh()
+{
+	 int i = k;
+	 while(i >= 1 && a[i] == n - k + i)
+	 {
+	 	i--;
+	 }
+	 if(i == 0) 
+	 {
+	 	rer(i, 1, k)
+	 		cout << i << " ";
+	 	cout << endl;
+	 }
+	 else 
+	 {
+	 	a[i]++;
+	 	rer(j, i + 1, k)
+	 		a[j] = a[j - 1] + 1;
+
+		 rer(i, 1, k)
+		 	cout << a[i] << " ";
+		 cout << endl;
+	}
+}
+
+int main()
+{
+	int t; cin >> t;
+	while(t--)
+	{
+		cin >> n >> k;
+		rer(i, 1, k)
+			cin >> a[i];
+		Sinh();
+	}
+
+	return 0;
+}
+
+3.Bài toán sinh hoán vị:
+Ví dụ n = 3 : 123 132 213 231 312 321
+Cấu hình đầu tiên : 123
+Câu hình cuối cùng : 321
+
+Code:
+int n, a[100], final;
+void KhoiTao()
+{
+	rer(i, 1, n)
+		a[i] = i;
+}
+
+void Sinh()
+{
+	int i = n - 1;
+	while(i >= 1 && a[i] > a[i + 1])
+	{
+		i--;
+	}
+
+	if(i == 0) final = 0;
+	else
+	{
+		// Tìm thằng > a[i] nhỏ nhất (i + 1, n);
+		int j = n;
+		while(a[i] > a[j]) j--;
+		swap(a[i], a[j]);
+		int l = i + 1, r = n;
+		while(l < r)
+		{
+			swap(a[l], a[r]);
+			l++; r--;
+		}
+	}	
+
+}
+
+int main()
+{
+	cin >> n;
+	final = 1;
+	KhoiTao();
+	while(final)
+	{
+		rer(i, 1, n)
+			cout << a[i];
+		cout << endl;
+		Sinh();
+	}
+	
+	return 0;
+}
+
+Hàm next_permutation(a, a + n):
+	int n; cin >> n;
+	int a[n];
+	for(int i = 0; i <= n; i++) a[i] = i + 1;
+	do
+	{
+		for(int i = 0; i < n; i++)
+			cout << a[i];
+		cout << endl;
+	} while(next_permutation(a, a + n));
+
+Hàm prev_permutation(a, a + n): hoán vị ngược
+	int n; cin >> n;
+	int a[n];
+	for(int i = 0; i < n; i++) a[i] = n - i;
+	do
+	{
+		for(int i = 0; i < n; i++)
+			cout << a[i];
+		cout << endl;
+	} while(prev_permutation(a, a + n));
+
+Chỉ sinh hoán vị tiếp theo:
+int n, a[1001];
+
+void Sinh()
+{
+	 int i = n - 1;
+	 while(i >= 1 && a[i] > a[i + 1]) i--;
+	 if(i == 0)
+	 	rer(i, 1, n)
+	 		cout << i << " ";
+	 else
+	 {
+	 	int j = n;
+	 	while(a[i] > a[j]) j--;
+	 	swap(a[i], a[j]);
+	 	reverse(a + i + 1, a + n + 1);
+	 	rer(i, 1, n)
+	 		cout << a[i] << " ";
+	 }
+	 cout << endl;
+}
+
+int main()
+{
+	int t; cin >> t;
+	while(t--)
+	{
+		cin >> n;
+		rer(i, 1, n)
+			cin >> a[i];
+		Sinh();
+	}
+
+	return 0;
+}
+
+4.Phân hoạch:
+Ví dụ : 6 = 6 = 5 1 = 4 2 = 3 3 = ... = 1 1 1 1 1 1;
+int n, a[100], final, cnt;
+void KhoiTao()
+{
+	cnt = 1;
+	a[1] = n;
+}
+
+void Sinh()
+{
+	int i = cnt;
+	while(i >= 1 && a[i] == 1)
+	{
+		i--;
+	}
+	if(i == 0) final = 0;
+	else
+	{
+		a[i]--;
+		int d = cnt - i + 1;
+		cnt = i;
+		int q = d / a[i];
+		int r = d % a[i];
+		if(q)
+		{
+			for(int j = 1; j <= q; j++)
+			{
+				++cnt;
+				a[cnt] = a[i];
+			}
+		}
+		if(r) 
+		{
+			++cnt;
+			a[cnt] = r;
+		}
+	}
+}
+int main()
+{
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+	cin >> n;
+	final = 1;
+	KhoiTao();
+	while(final)
+	{
+		for(int i = 1; i <= cnt; i++)
+			cout << a[i] << " ";
+		cout << endl;
+		Sinh();
+	}
+	
+	return 0;
+}

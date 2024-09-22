@@ -1,0 +1,446 @@
+============================================TREE========================================
+I. CÂY NHỊ PHÂN TÌM KIẾM:
+1. Những điều cần lưu ý:
+	* Khi một node có hai node con thì node con trái nhỏ hơn node cha và node con phải lớn hơn node cha.
+	* Các phần tử không được trùng nhau.
+
+Code:
+
+#include <bits/stdc++.h>
+using namespace std;
+
+// Khai báo cấu trúc node
+struct node
+{
+	int data;
+	node* left;
+	node* right;
+};
+
+node* newNode(int x)
+{
+	node* newnode = new node;
+	newnode->data = x;
+	newnode->left = NULL;
+	newnode->right = NULL;
+	return newnode;
+}
+
+// Thêm node vào cây
+void AddNode(node *&t, int x)
+{
+	if(t == NULL)
+	{
+		node* add = newNode(x);
+		t = add;
+	}
+	else if(x < t->data)
+	{
+		AddNode(t->left, x);
+	}
+	else if(x > t->data)
+	{
+		AddNode(t->right, x);
+	}
+}
+
+void NLR(node *t)
+{
+	if(t != NULL)
+	{
+		cout << t->data << " ";
+		NLR(t->left);
+		NLR(t->right);
+	}
+}
+
+void LNR(node *t) // Cách duyệt này theo thứ tự tăng dần
+{
+	if(t != NULL)
+	{
+		LNR(t->left);
+		cout << t->data << " ";
+		LNR(t->right);
+	}
+}
+
+void LRN(node *t)
+{
+	if(t != NULL)
+	{
+		LRN(t->left);
+		LRN(t->right);
+		cout << t->data << " ";
+	}
+}
+
+void NRL(node *t)
+{
+	if(t != NULL)
+	{
+		cout << t->data << " ";
+		NRL(t->right);
+		NRL(t->left);
+	}
+}
+
+void RNL(node *t) // Duyệt theo thứ tự giảm dần
+{
+	if(t != NULL)
+	{
+		RNL(t->right);
+		cout << t->data << " ";
+		RNL(t->left);
+	}
+}
+
+void RLN(node* t)
+{
+	if(t != NULL)
+	{
+		RLN(t->right);
+		RLN(t->left);
+		cout << t->data << " ";
+	}
+}
+
+node* Search(node *t, int x)
+{
+	if(t == NULL) return NULL;
+	if(t->data == x)
+		return t;
+	else if(t->data > x)
+		return Search(t->left, x);
+	else 
+		return Search(t->right, x);
+}
+
+int dem2 = 0;
+void XuatNode2Con(node* t)
+{
+	if(t != NULL)
+	{
+		if(t->left != NULL && t->right != NULL)
+		{
+			dem2++;
+			cout << t->data << " ";
+		}
+		XuatNode2Con(t->left);
+		XuatNode2Con(t->right);
+	}
+}
+
+int dem1 = 0;
+void XuatNode1Con(node *t)
+{
+	if(t != NULL)
+	{
+		if((t->left != NULL && t->right == NULL) || (t->left == NULL && t->right != NULL))
+		{
+			dem1++;
+			cout << t->data << " ";
+		}
+		XuatNode1Con(t->left);
+		XuatNode1Con(t->right);
+	}
+}
+
+int dem0 = 0;
+void XuatNodeLa(node* t)
+{
+	if(t != NULL)
+	{
+		if(t->left == NULL && t->right == NULL)
+		{
+			dem0++;
+			cout << t->data << " ";
+		}
+		XuatNodeLa(t->left);
+		XuatNodeLa(t->right);
+	}
+}
+
+int SearchMin(node* t)
+{
+	while(t->left != NULL)
+		t = t->left;
+	return t->data;
+}
+
+int SearchMax(node *t)
+{
+	while(t->right != NULL)
+		t = t->right;
+	return t->data;
+}
+
+void NodeTheMang(node *&X, node *&Y)
+{
+	if(Y->left != NULL)
+		NodeTheMang(X, Y->left);
+	else 
+	{
+		X->data = Y->data;
+		X = Y;
+		Y = Y->right;
+	}
+}
+
+void DeleteNode(node *&t, int x)
+{
+	if(t == NULL) return;
+	if(t->data > x)
+		DeleteNode(t->left, x);
+	else if(t->data < x)
+		DeleteNode(t->right, x);
+	else 
+	{
+		node* X = t;
+		if(t->left == NULL)
+			t = t->right;
+		else if(t->right == NULL)
+			t = t->left;
+		else // Tìm node trái nhất của cây con phải
+		{
+			NodeTheMang(X, t->right);
+		}
+		delete X;
+	} 
+}
+
+void BFS(node *t)
+{
+	queue<node*> q;
+	if(t != NULL)
+		q.push(t);
+	while(!q.empty())
+	{
+		node* top = q.front(); q.pop();
+		cout << top->data << " ";
+		if(top->left != NULL)
+			q.push(top->left);
+		if(top->right != NULL)
+			q.push(top->right);
+	}
+}
+
+int Height(node* t)
+{
+	if(t == NULL) return -1;
+	return max(Height(t->left), Height(t->right)) + 1;
+}
+
+void Sum(node* t, int lv, int &sum, int &cnt, int curr = 0)
+{
+	if(t == NULL) return;
+	if(curr == lv)
+	{
+		cnt++;
+		sum += t->data;
+	}
+	Sum(t->left, lv, sum, cnt, curr + 1);
+	Sum(t->right, lv, sum, cnt, curr + 1);
+}
+
+double AverageByLevel(node* t, int lv)
+{
+    int sum = 0;
+    int cnt = 0;
+    int curr = 0;
+    Sum(t, lv, sum ,cnt, curr);
+    if(sum == 0)
+    	return t->data;
+    return 1.0*sum / cnt;
+}
+
+int main()
+{
+	node* t = NULL;
+	while(true)
+	{
+		system("cls");
+		cout << "===========MENU==========\n";
+		cout << "1. Them node vao cay\n";
+		cout << "2. Duyet NLR\n"; // Pre-order Traversal
+		cout << "3. Duyet LNR\n"; // In-order Traversal
+		cout << "4. Duyet LRN\n"; // Post-order Traversal
+		cout << "5. Duyet NRL\n";
+		cout << "6. Duyet RNL\n";
+		cout << "7. Duyet RLN\n";
+		cout << "8. Tim kiem node\n";
+		cout << "9. Xuat node co 2 con\n";
+		cout << "10. Xuat node co 1 con\n";
+		cout << "11. Xuat node la\n";
+		cout << "12. Node min\n";
+		cout << "13. Node max\n";
+		cout << "14. Xoa node bat ki\n";
+		cout << "15. Duyet BFS\n";
+		cout << "16. Tim chieu cao\n";
+		cout << "0. Thoat\n";
+		cout << "==========================\n";
+		int chon; cout << "Nhap lua chon: "; cin >> chon;
+		if(chon == 1)
+		{
+			int x; cout << "Nhap gia tri: "; cin >> x;
+			AddNode(t, x);
+		} 
+		else if(chon == 2)
+		{
+			NLR(t);
+			cout << endl;
+			system("pause");
+		}
+		else if(chon == 3)
+		{
+			LNR(t);
+			cout << endl;
+			system("pause");
+		}
+		else if(chon == 4)
+		{
+			LRN(t);
+			cout << endl;
+			system("pause");
+		}
+		else if(chon == 5)
+		{
+			NRL(t);
+			cout << endl;
+			system("pause");
+		}
+		else if(chon == 6)
+		{
+			RNL(t);
+			cout << endl;
+			system("pause");
+		}
+		else if(chon == 7)
+		{
+			RLN(t);
+			cout << endl;
+			system("pause");
+		}
+		else if(chon == 8)
+		{
+			cout << "Nhap gia tri can tim: "; int x; cin >> x;
+			node* se = Search(t, x);
+			if(se != NULL)
+				cout << "Tim thay node trong cay\n";
+			else cout << "Khong tim thay node trong cay\n";
+			system("pause");
+		}
+		else if(chon == 9)
+		{
+			cout << "Node co 2 con: ";
+			XuatNode2Con(t);
+			cout << "\nVay cay co " << dem2 << " node co 2 con\n";
+			system("pause");
+		}
+		else if(chon == 10)
+		{
+			cout << "Node co 1 con: ";
+			XuatNode1Con(t);
+			cout << "\nVay cay co " << dem1 << " node co 1 con\n";
+			system("pause");
+		}
+		else if(chon == 11)
+		{
+			cout << "Node la: ";
+			XuatNodeLa(t);
+			cout << "\nVay cay co " << dem0 << " node la\n";
+			system("pause");
+		}
+		else if(chon == 12)
+		{
+			cout << "Gia tri nho nhat trong cay: " << SearchMin(t) << endl;
+			system("pause");
+		}
+		else if(chon == 13)
+		{
+			cout << "Gia tri lon nhat trong cay: " << SearchMax(t) << endl;
+			system("pause");
+		}
+		else if(chon == 14)
+		{
+			int x; cout << "Nhap gia tri can xoa: "; cin >> x;
+			DeleteNode(t, x);
+		}
+		else if(chon == 15)
+		{
+			BFS(t);
+			cout << endl;
+			system("pause");
+		}
+		else if(chon == 16)
+		{
+			cout << "Chieu cao cua cay la: " << Height(t) << endl;
+			system("pause");
+		}
+		else
+			break;
+	}
+	return 0;
+}
+
+II CÂY B - TREE:
+1. Giới thiệu:
+	* Cây cân bằng hoàn toàn: Số lượng node của cây con trái và cây con phải lệch nhau không quá một phần từ (tìm kiếm ổn định).
+	* Cây nhị phân tìm kiếm cân bằng AVL: chiều cao giữa cây con trái và cây con phải lệch nhau không quá 1.
+	* B - tree là trường hợp tổng quát của cây AVL.
+	* Mỗi node có thể có nhiều khóa. Khóa trong một node tăng dần.
+	* Gọi n là số bậc của cây:
+		- Mỗi node có tối đa n - 1 khóa và tối thiểu |n / 2| - 1 khóa(|n / 2| số lấy nguyên tròn lên. Ví dụ |3 / 2| = 2).
+		- Mỗi node(trừ node gốc) có tối đa n node con và tối thiểu |n / 2| node con.
+		- Tất cả nút lá đều cùng mức.
+		- Nút gốc có ít nhất 2 nút con và tối thiểu 1 khóa.
+	* Ví dụ: Cây B - tree bậc 3:
+		- Mỗi node có tối đa 2 khóa và có tối thiểu 1 khóa.
+		- Mỗi node(trừ gốc) có tối đa 3 con và tối thiểu 2 con.
+		- Tất cả node lá đều cùng mức.
+		- Node gốc có ít nhất 2 con và tối thiểu 1 khóa.
+
+2. Các thao tác trên cây B - tree:
+a. Tìm kiếm: Hoàn thiện.
+b. Thao tác thêm:
+	* Nếu cây rỗng thì tạo ra node gốc với khóa cần thêm.
+	* Ngược lại:
+		- Tìm vị trí cần chèm để đảm bảo đúng.
+		- Nếu vượt qua số lượng khóa cho phé thì cắt làm 2 từ vị trí trung vị, đưa trung vị lên làm góc.
+		- Nếu cha còn khóa thì cứ đưa trung vị lên cha.
+		- Tách đoạn bên trái thành node con trái và tách đoạn bên phải thành node con phải.
+c. Thao tác xóa:
+	* TH1 : Khóa cần xóa thuộc node lá.
+		- Không vi phạm số lượng khóa tối tiểu trên một node thì cứ xóa bình thường.
+		- Vi phạm số lượng khóa tối tiểu trên một khóa:
+			+ Mượn khóa của node có nhiều hơn số lượng khóa tối tiểu. Thứ tự node anh em duyệt để mượn từ trái sang phải. (phải nhất bên trái hoặc trái nhất bên phải).
+			+ Nếu không mượn được khóa thì trộn node anh em trái hoặc phải thông qua node cha.
+	* TH2 : khóa cần xóa thuộc node trong.
+		- Khóa bị xóa sẽ được thay thế bởi khóa phải nhaatss trên cây con trái hoặc khóa trái nhất trên cây con phải nếu mượn được.
+		- Nếu con trái và phải đều đủ số khóa tối thiểu thì trộn chúng lại.
+		- Sau khi trộn nếu nút cha có ít hơn số khóa tối thiểu thì tìm khóa thay thế từ các nút anh em như trong trường hợp 1.
+	* TH3 : xóa một khóa làm giảm chiều cao của cây:
+		- Mượn khóa các node con để thay thế từ trái sang phải.
+		- Nếu các node con đủ số khoa tối thiểu thì trộn chúng thành một node và mượn khóa trên node anh em.
+		- Nếu node anh em đủ khoa tối thiểu thì trộn nút anh em với node cha.
+
+3. Cây nhị phân tìm kiếm tự cân bằng - AVL:
+	* Cây cân bằng AVL là cây nhị phân tìm kiếm mà tại mỗi đỉnh của cây độ cao của cây con trái và cây con phải không chênh lệch quá 1.
+	* Các trường hợp mất cân bằng :
+		- Mất cân bằng trái - trái (L - L).
+		- Mất cân bằng trái - phải (L - R).
+		- Mất cân bằng phải - phải (R - R).
+		- Mất cân bằng phải - trái (R - L).
+	* Xử lí mất cân bằng:
+		- Mất căn bằng phải phải :
+			+ Quay trái tại node đó.
+		- Mất cân bằng phải trái :
+			+ Quay phải tại con phải.
+			+ Quay trái tại node mất cân bằng.
+		- Mất căn bằng trái trái:
+			+ Quay phải tại node đó.
+		- Mất căn bằng trái phải:
+			+ Quay trái tại node phải.
+			+ Quay phải tại node mất cân bằng.
+
+	Lưu ý: Quay trái thì con trái của node đưa lên phải trở thành con phải của con mất cân bằng ban đầu. Ngược lại thì nếu quay phải thì con phải của node đưa lên sẽ trở thanhf con trái của node mất cân bằng ban đầu.
+

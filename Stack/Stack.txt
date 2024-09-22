@@ -1,0 +1,300 @@
+**********Lý thuyết Stack***********
+Cách hoạt động LIFO.
+Cú pháp : stack< datatype > name;
+Các hàm thường dùng trong stack:
+1. push() : thêm một phần tử vào stack. 
+2. pop() : xóa 1 phần tử đầu stack. 
+3. top() : Lấy giá trị phần tử ở đầu stack.
+4. size() : Kiểm tra kích thước stack.
+5. empty() : xem stack có rổng hay không
+6. Độ phức tạp : O(1)
+
+Bài toán chuyển hệ thập phân sang nhị phân:
+	stack<int> st;
+	int n; cin >> n;
+	while(n)
+	{
+		st.push(n % 2);
+		n /= 2;
+	}
+
+	while(!st.empty())
+	{
+		cout << st.top();
+		st.pop();
+	}
+
+Bài toán in chuỗi(có nhiều dấu cách) theo thứ tự ngược lại:
+
+	stack<string> st;
+	string s; getline(cin, s);
+	stringstream ss(s);
+	string str;
+	while(ss >> str)
+	{
+		st.push(str);
+	}
+
+	while(!st.empty())
+	{
+		cout << st.top() << " ";
+		st.pop();
+	}
+
+Bài toán kiểm tra sâu dấu ngoặc có hợp lệ hay không:
+	string s; cin >> s;
+	stack<char> st;
+	for(char x : s)
+	{
+		if(x == '(' || x == '{' || x == '[')
+			st.push(x);
+		else 
+		{
+			if(st.empty() || st.top() == '{' && x != '}' || st.top() == '(' && x != ')' || st.top() == '[' && x != ']')
+			{
+				cout << "NO\n";
+				return 0;
+			}
+			else st.pop();
+		}
+	}
+
+	if(st.empty())
+		cout << "YES";
+	else cout << "NO";
+
+Bài toán Next greater element:
+	int n; cin >> n;
+	int a[n], b[n];
+	for(int &x : a) cin >> x;
+
+	stack<int> st;
+	for(int i = 0; i < n; i++)
+	{
+		if(st.empty())
+			st.push(i);
+		else 
+		{
+			while(!st.empty() && a[st.top()] < a[i])
+			{
+				b[st.top()] = a[i];
+				st.pop();
+			}
+			st.push(i);
+		}
+	}
+	while(!st.empty())
+	{
+		b[st.top()] = -1;
+		st.pop();
+	}
+
+	for(int x : b) cout << x << ' ';
+
+Bài toán hình chữ nhật lớn nhất:
+
+int main()
+{
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+	
+	int n; cin >> n;
+	int a[n];
+	for(int &x : a) cin >> x;
+	stack<int> st;
+	int res = 0, i = 0;
+	while(i < n)
+	{
+		if(st.empty() || a[i] >= a[st.top()])
+		{
+			st.push(i);
+			i++;
+		}
+		else 
+		{
+			int index = st.top(); // Chỉ số ở đỉnh stack
+			st.pop();
+			// Tính toán diện tích tạo bởi cột hiện tại, trong đó cột hiện tại được coi là cột ngắn nhất của hình chữ nhật
+			if(st.empty())
+				res = max(res, a[index] * i);
+			else
+				res = max(res, a[index] * (i - st.top() - 1));
+		}
+	}
+
+	while(!st.empty())
+	{
+		int index = st.top();
+		st.pop();
+		if(st.empty())
+			res = max(res, a[index] * i);
+		else 
+			res = max(res, a[index] * (i - st.top() - 1));
+	}
+
+	cout << res << endl;
+	return 0;
+}
+
+Cài đặt stack bằng mảng và danh sách liên kết:
+1. Mảng:
+#include <bits/stdc++.h>
+using namespace std;
+
+int n = 0, Stack[10001];
+
+void push(int x)
+{
+	Stack[n] = x;
+	++n;
+}
+
+void pop()
+{
+	if(n >= 1)
+		--n;
+}
+
+int top()
+{
+	return Stack[n - 1];
+}
+
+int size()
+{
+	return n;
+}
+
+int main()
+{	
+	while(true)
+	{
+		cout << "========================\n";
+		cout << "1. push\n";
+		cout << "2. pop\n";
+		cout << "3. top\n";
+		cout << "4. size\n";
+		cout << "0. Thoat\n";
+		cout << "========================\n";
+		int chon; cin >> chon;
+		if(chon == 1)
+		{
+			int x; cout << "Nhap gia tri: "; cin >> x; cout << x << endl;
+			push(x);
+		}
+		else if(chon == 2)
+		{
+			pop();
+		}
+		else if(chon == 3)
+		{
+			if(n == 0) cout << "EMPTY\n";
+			else cout << top() << endl;
+		}
+		else if(chon == 4)
+			cout << size() << endl;
+		else 
+			break;
+	}
+	return 0;
+}
+
+2. DSLK:
+
+#include <bits/stdc++.h>
+using namespace std;
+
+struct node 
+{
+	int data;
+	node* next;
+};
+
+node* newNode(int x)
+{
+	node* newnode = new node();
+	newnode->next = NULL;
+	newnode->data = x;
+	return newnode;
+}
+
+void push(node *&top, int x)
+{
+	node* newnode = newNode(x);
+	if(top == NULL)
+	{
+		top = newnode;
+		return;
+	}
+	newnode->next = top;
+	top = newnode;
+}
+
+void pop(node *&top)
+{
+	if(top != NULL)
+	{
+		node *temp = top;
+		top = temp->next;
+		delete temp;
+	}
+}
+
+int top(node *&top)
+{
+	if(top != NULL)
+	{
+		return top->data;
+	}
+}
+
+int size(node *head)
+{
+	int dem = 0;
+	while(head != NULL)
+	{
+		dem++;
+		head = head->next;
+	}
+	return dem;
+}
+bool empty(node *top)
+{
+	return (top == NULL);
+}
+
+int main()
+{
+	node* Stack = 0;
+	while(true)
+	{
+		cout << "========================\n";
+		cout << "1. push\n";
+		cout << "2. pop\n";
+		cout << "3. top\n";
+		cout << "4. size\n";
+		cout << "0. Thoat\n";
+		cout << "========================\n";
+		int chon; cin >> chon;
+		if(chon == 1)
+		{
+			int x; cout << "Nhap gia tri: "; cin >> x;
+			push(Stack, x);
+		}
+		else if(chon == 2)
+		{
+			pop(Stack);
+		}
+		else if(chon == 3)
+		{
+			if(Stack == NULL) cout << "EMPTY\n";
+			 cout << top(Stack) << endl;
+		}
+		else if(chon == 4)
+			cout << size(Stack) << endl;
+		else 
+			break;
+	}
+	return 0;
+}

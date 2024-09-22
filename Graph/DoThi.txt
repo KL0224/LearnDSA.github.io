@@ -1,0 +1,1429 @@
+I. lý thuyết đồ thị:
+1. Đồ thị vô hướng: đơn, đa, giả(có loop - khuyên).
+2. Đồ thị có hướng: đơn, đa.
+3. Đỉnh kề, cạnh liên thuộc.
+4. Bậc của đỉnh(vô hướng - có hướng).
+5. Đường đi, đường đi đơ(đỉnh không trùng nhau).
+6. Chu trình, chu trình đơn(đỉnh không trùng nhau trừ đầu và cuối).
+7. Liên thông, thành phần liên thông, đồ thị liên thông(vô hướng).
+8. Liên thông mạnh(có hướng): giữa 2 điểm bất kì đều có đường đi.
+9. Liên thông yếu(có hướng): nếu đồ thị vô hướng của nó liên thông.
+10. Liên thông mạnh thì chắc chắn là liên thông yếu.
+
+II. Xây dựng đồ thị:
+1. Ma trận kề: n (n là số đỉnh).
+a. Vô hướng : ma trận đối xứng, tổng ma trận = 2 lần cạnh, tổng mỗi hàng(cột) là bậc của đỉnh đó.
+b. có hướng : dựa vào hướng của cạnh để xét.
+Tổng các phần tử trên hàng : bán bậc ra.
+Tổng các phần tử trên cột : bán bậc vào.
+Tổng ma trận sẽ là số cạnh.
+c. Ma trận trọng số: có trọng số trên cạnh (điền trọng số vào ô có cạnh nối).
+Ưu điểm: dễ cài đặt, dễ truy xuất để biết 2 đỉnh có kề nhau hay không O(1).
+Nhược điểm : tốn bộ nhớ.
+
+2. Danh sách cạnh: Cho biết danh sách cạnh(trường hợp thưa - số cạnh <= 6 số đỉnh).
+**Đồ thị vô hướng.
+Thường input: số cạnh, số đỉnh và các cạnh theo thứ tự tăng dần.
+a. Danh sách cạnh không có trọng : dùng pair để lưu đỉnh đầu và đỉnh cuối.
+b. Danh sách cạnh có trọng số thường dùng dùng struct.
+** Đồ thị có hướng : lưu ý thêm hướng đi của cạnh.
+Ưu điểm: tiết kiệm bộ nhớ.
+Nhược điểm: Phải duyệt toàn bộ các đỉnh để biết một đỉnh kề với bao nhiêu đỉnh.
+
+3. Danh sách kề: dùng vector<vector<int>> 
+(vector<int> adj[1001]) để lưu các đỉnh kề của một đỉnh.
+Thường dùng để input.
+Ưu điểm: dễ dàng duyệt các đỉnh kề, cạnh kề.
+Nhược điểm: ...
+
+4. Các cách chuyển đổi:
+a. Danh sách cạnh sang ma trận kề: 
+	int a[1001][1001]; // khai báo cục bộ
+	int n, m; cin >> n >> m;
+    for(int i = 0; i < m; i++)
+    {
+        int x, y; cin >> x >> y;
+        a[x][y] = a[y][x] = 1;
+    }
+
+    for(int i = 1; i <= n; i++)
+    {
+        for(int j = 1; j <= n; j++)
+            cout << a[i][j] << " ";
+        cout << endl;
+    }
+
+b. Danh sách cạnh sang danh sách kề
+	vector<int> adj[1001];
+	int n, m; cin >> n >> m;
+    for(int i = 0; i < m; i++)
+    {
+        int x, y; cin >> x >> y;
+        adj[x].push_back(y);
+        adj[y].push_back(x);
+    }
+
+    for(int i = 1; i <= n; i++)
+    {
+        cout << i << " : ";
+        for(int j = 0; j < adj[i].size(); j++)
+        {
+            cout << adj[i][j] << " " ;
+        }
+        cout << endl;
+    }
+    
+    return 0;
+
+ c. Ma trận kề sang danh sách cạnh
+ 	int a[1001][1001];
+	int main()
+	{
+	    ios::sync_with_stdio(0);
+	    cin.tie(0);
+	    cout.tie(0);
+	    int n; cin >> n;
+	    vector<pair<int, int>> edg;
+	    for(int i = 1; i <= n; i++)
+	        for(int j = 1; j <= n; j++)
+	            cin >> a[i][j];
+
+	    for(int i = 1; i <= n; i++)
+	    {
+	        for(int j = 1; j <= n; j++)
+	        {
+	            if(a[i][j] == 1 && i < j)
+	            {
+	                edg.push_back({i, j});
+	            }
+	        }
+	    }
+
+	    for(auto x : edg)
+	        cout << x.first << " " << x.second << endl;
+	    
+	    return 0;
+	}
+
+d. Ma trận kề sang danh sách ke:
+	int a[1001][1001];
+	vector<int> adj[1001];
+	int main()
+	{
+	    ios::sync_with_stdio(0);
+	    cin.tie(0);
+	    cout.tie(0);
+	    int n; cin >> n;
+	    for(int i = 1; i <= n; i++)
+	        for(int j = 1; j <= n; j++)
+	            cin >> a[i][j];
+
+	    for(int i = 1; i <= n; i++)
+	    {
+	        for(int j = 1; j <= n; j++)
+	        {
+	            if(a[i][j])
+	            {
+	                adj[i].push_back(j);
+                    adj[j].push_back(i);
+	            }
+	        }
+	    }
+
+	    for(int i = 1; i <= n; i++)
+	    {
+	        cout << i << " : ";
+	        for(auto x : adj[i])
+	            cout << x << " ";
+	        cout << endl;
+	    }
+	    
+	    return 0;
+	}
+
+e. Danh sách kề sang ma trận kề: 
+	int a[1001][1001];
+	vector<int> adj[1001];
+	int main()
+	{
+	    ios::sync_with_stdio(0);
+	    cin.tie(0);
+	    cout.tie(0);
+	    int n; cin >> n;
+	    cin.ignore();
+	    for(int i = 1; i <= n; i++)
+	    {
+	        string s, num;
+	        getline(cin, s);
+	        stringstream ss(s);
+	        while(ss >> num)
+	        {
+	            a[i][stoi(num)] = 1;
+	        }
+	    }
+
+	    for(int i = 1; i <= n; i++)
+	    {
+	        for(int j = 1; j <= n; j++)
+	        {
+	            cout << a[i][j] << " ";
+	        }
+	        cout << endl;
+	    }
+	    
+	    return 0;
+	}
+
+f. Danh sách kề sang danh sách cạnh
+	int n;
+	vector<pair<int, int>> edg;
+	int main()
+	{
+	    ios::sync_with_stdio(0);
+	    cin.tie(0);
+	    cout.tie(0);
+	    cin >> n;
+	    cin.ignore();
+	    for(int i = 0; i <= n; i++)
+	    {
+	        string s, num;
+	        getline(cin, s);
+	        stringstream ss(s);
+	        while(ss >> num)
+	        {
+	            if(stoi(num) > i)
+	                edg.push_back({i, stoi(num)});
+	            
+	        }
+	    }
+
+	    for(auto it : edg)
+	        cout << it.first << " " << it.second << endl;
+	    
+	    return 0;
+	}
+
+5.Thuật toán duyệt theo chiều sâu: Depth First Search DFS với input là danh sách kề:
+	int n, m;
+	vi adj[1001];
+	bool visited[1001];
+
+	void Input()
+	{
+	    cin >> n >> m;
+	    for(int i = 0; i < m; i++)
+	    {
+	        int x, y; cin >> x >> y;
+	        adj[x].push_back(y);
+	        adj[y].push_back(x); // nếu là đồ thị có hướng thì bỏ dòng này
+	    }
+	    memset(visited, false, sizeof(visited));
+	}
+
+	void DFS(int u)
+	{
+	    cout << u << " ";
+	    visited[u] = true;
+	    for(int x : adj[u])
+	    {
+	        if(!visited[x])
+	        {
+	            DFS(x);
+	        }
+	    }
+	}
+	int main()
+	{
+	    ios::sync_with_stdio(0);
+	    cin.tie(0);
+	    cout.tie(0);
+	  
+	    Input();
+	    DFS(1);
+	    return 0;
+	}
+
+****Cạnh của cây tìm kiếm DFS:
+Tree Egde : cạnh liền khi đi thăm từ đỉnh đến đỉnh mới.
+Forward Edge: cạnh tổ tiên đến con.
+Cross Edge: cạnh nối giữa 2 đỉnh chưa liên quan.
+Back Edge: cạnh ngược đi từ con cháu đến tổ tiên.
+
+6.Thuật toán tìm kiếm theo chiều rộng:
+Breadth First Search : BFS
+void BFS(int u)
+{
+	quene<int> q;
+	q.push(u);
+	visited[u] = true;
+	while(!q.empty())
+	{
+		int v = q.front();
+		q.pop();
+		for(int x : adj[v])
+		{
+			if(!visited[x])
+			{
+				visited[x] = true;
+				q.pop(x);
+			}
+		}
+
+	}
+}
+
+7.Đếm thành phần liên thông:
+	void connectedComponent()
+	{
+	    int res = 0;
+	    memset(visited, false, sizeof(visited));
+	    for(int i = 1; i <= n; i++)
+	    {
+	        if(!visited[i])
+	        {
+	            res++;
+	            DFS(i);
+	        }
+	    }
+
+	    cout << res << endl;
+	}
+
+In ra các đỉnh liên thông:
+	void connectedComponent()
+	{
+	    int res = 0;
+	    memset(visited, false, sizeof(visited));
+	    for(int i = 0; i < n; i++)
+	    {
+	        if(!visited[i])
+	        {
+	            res++;
+	            cout << "Thanh phan lien thong thu " << res << " la: ";
+	            DFS(i);
+	            cout << endl;
+	        }  
+	    }
+	    cout << "So thanh phan lien thong cua do thi la: " << res << endl; 
+	}
+Kiểm tra đồ thị liên thông thì res sẽ bằng 1.
+
+8.Đường đi trong có trọng số.
+
+int n, m, s, t;
+int parent[1001];
+bool visited[1001];
+vector<int> adj[1001];
+
+void Nhap()
+{
+    cin >> n >> m;
+    for(int i = 1; i <= m; i++)
+    {
+        int x, y; cin >> x >> y;
+        adj[x].push_back(y);
+        adj[y].push_back(x);
+    }
+}
+void DFS(int u)
+{
+    visited[u] = true;
+    for(int x : adj[u])
+    {
+        if(!visited[x])
+        {
+            parent[x] = u;
+            DFS(x);
+        }
+    }
+}
+
+void Path(int s, int t)
+{
+    memset(visited, false, sizeof(visited));
+    memset(parent, 0, sizeof(parent));
+    DFS(s);
+    if(!visited[t])
+    {
+        cout << "Khong co dung di.\n";
+    }
+    else 
+    {
+        vector<int> path;
+        while(t != s)
+        {
+            path.push_back(t);
+            t = parent[t];
+        }
+        path.push_back(s);
+        reverse(path.begin(), path.end());
+        for(int x : path)
+            cout << x << " ";
+    }
+}
+int main()
+{
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
+    
+    Nhap();
+    cin >> s >> t;
+    Path(s, t);
+
+    return 0;
+}
+// Đường đi theo BFS
+void BFS(int u)
+{
+    visited[u] = true;
+    queue<int> q;
+    q.push(u);
+    while(!q.empty())
+    {
+        int v = q.front();
+        q.pop();
+        for(int x : adj[v])
+        {
+            if(!visited[x])
+            {
+                visited[x] = true;
+                q.push(x);
+                parent[x] = v;
+            }
+        }
+    }
+}
+
+Tìm đường đi theo thành phần liên thông có thể dùng mảng hoặc vector;
+
+9.BFS, DFS on grid(lưới):
+
+**********BFS**********
+int n, m;
+bool visited[1001][1001];
+char a[1001][1001];
+int dx[4] = {-1, 0, 0, 1};
+int dy[4] = {0, -1, 1, 0};
+
+void DFS(int i, int j)
+{
+    cout << i << " " << j << endl;
+    visited[i][j] = true;
+    for(int k = 0; k < 4; k++)
+    {
+        int i1 = i + dx[k];
+        int j1 = j + dy[k];
+        if(i1 >= 1 && i1 <= n && j1 >=1 && j1 <= m && a[i1][j1] =='x' && !visited[i1][j1])
+        {
+            DFS(i1, j1);
+        }
+    }
+}
+
+
+int LienThong()
+{
+    cin >> n >> m;
+    for(int i = 1; i <= n; i++)
+        for(int j = 1; j <= m; j++)
+            cin >> a[i][j];
+
+    memset(visited, false, sizeof(visited));
+
+    int count = 0;
+    for(int i = 1; i <= n; i++)
+    {
+        for(int j = 1; j <= m; j++)
+        {
+
+            if(a[i][j] == 'x' && !visited[i][j])
+            {
+                cout << "Thanh phan lien thong thu " << count + 1 << ": " << endl;
+                DFS(i, j);
+                count++;
+            }
+        }
+    }
+    cout << "So thanh phan lien thong: " << count << endl;
+}
+
+int main()
+{
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
+    
+    LienThong();
+    return 0;
+}
+
+************DFS***********
+void BFS(int i, int j)
+{
+    queue<pair<int, int>> q;
+    q.push({i, j});
+    a[i][j] = 'o';
+    cout << i << " " << j << endl;
+    while(!q.empty())
+    {
+        pair<int, int> p = q.front();
+        q.pop();
+        for(int k = 0; k < 4; k++)
+        {
+            int i1 = p.first + dx[k];
+            int j1 = p.second + dy[k];
+            if(i1 >= 1 && i1 <= n && j1 >= 1 && j1 <= m && a[i1][j1] == 'x')
+            {
+                q.push({i1, j1});
+                a[i1][j1] = 'o';
+                cout << i1 << " " << j1 << endl;
+            }
+        }
+    }
+}
+
+Kiểm tra 2 điểm trên lưới có đường đi hay không:
+o: có đường đi và x: không có đường đi
+BFS:
+int n, m, x1, y1;
+char a[1001][1001];
+int dx[4] = {-1, 0, 0, 1};
+int dy[4] = {0, -1, 1, 0};
+
+bool DFS(int i, int j)
+{
+    cout << i << " " << j << endl;
+    if(a[i][j] == 'B')
+        return true;
+    a[i][j] = 'x';
+    for(int k = 0; k < 4; k++)
+    {
+        int i1 = i + dx[k];
+        int j1 = j + dy[k];
+        if(i1 >= 1 && i1 <= n && j1 >=1 && j1 <= m && a[i1][j1] != 'x')
+        {
+            if(DFS(i1, j1)) return true;
+        }
+    }
+    return false;
+}
+
+
+
+int LienThong()
+{
+    cin >> n >> m;
+    for(int i = 1; i <= n; i++)
+        for(int j = 1; j <= m; j++)
+        {
+            cin >> a[i][j];
+            if(a[i][j] == 'A')
+            {
+                x1 = i;
+                y1 = j;
+            }
+        }
+
+    if(DFS(x1, y1)) cout << "YES\n";
+    else cout << "NO\n";  
+}
+DFS:
+bool BFS(int i, int j)
+{
+    queue<pair<int, int>> q;
+    q.push({i, j});
+    a[i][j] = 'o';
+    cout << i << " " << j << endl;
+    while(!q.empty())
+    {
+        pair<int, int> p = q.front();
+        q.pop();
+        for(int k = 0; k < 4; k++)
+        {
+            int i1 = p.first + dx[k];
+            int j1 = p.second + dy[k];
+            if(i1 >= 1 && i1 <= n && j1 >= 1 && j1 <= m && a[i1][j1] != 'x')
+            {
+                if(a[i1][j1] == 'B') return true;
+                q.push({i1, j1});
+                a[i1][j1] = 'x';
+                cout << i1 << " " << j1 << endl;
+            }
+        }
+    }
+    return false;
+}
+
+int n, m, x1, y1, x2, y2;
+char a[1001][1001];
+int d[1001][1001]; // d[i][j] : lưu số bước đi từ ô bắc đầu đến o i, j
+int dx[4] = {-1, 0, 0, 1};
+int dy[4] = {0, -1, 1, 0};
+
+void BFS(int i, int j)
+{
+    queue<pair<int, int>> q;
+    q.push({i, j});
+    d[i][j] = 0;
+    a[i][j] = 'x';
+    while(!q.empty())
+    {
+        pair<int, int> p = q.front();
+        q.pop();
+        for(int k = 0; k < 4; k++)
+        {
+            int i1 = p.first + dx[k];
+            int j1 = p.second + dy[k];
+            if(i1 >= 1 && i1 <= n && j1 >= 1 && j1 <= m && a[i1][j1] != 'x')
+            {
+                d[i1][j1] = d[p.first][p.second] + 1;
+                if(a[i1][j1] == 'B') return;
+                q.push({i1, j1});
+                a[i1][j1] = 'x';
+            }
+        }
+    }
+}
+
+
+
+int LienThong()
+{
+    cin >> n >> m;
+    for(int i = 1; i <= n; i++)
+        for(int j = 1; j <= m; j++)
+        {
+            cin >> a[i][j];
+            if(a[i][j] == 'A')
+            {
+                x1 = i;
+                y1 = j;
+            }
+            else if(a[i][j] == 'B')
+            {
+                x2 = i; y2 = j;
+            }
+        }
+
+    BFS(x1, y1);
+    if(!d[x2][y2])
+    {
+        cout << "NO\n";
+    }  
+    else cout << d[x2][y2] << endl;
+}
+
+10.Xác định chu trình trên đồ thị vô hướng DFS:
+
+Đồ thị liên thông:
+int n, m;
+vector<int> adj[1001];
+bool visited[1001];
+
+void Input()
+{
+    cin >> n >> m;
+    for(int i = 0; i < m; i++)
+    {
+        int x, y; cin >> x >> y;
+        adj[x].pb(y);
+        adj[y].pb(x);
+    }
+    memset(visited, false, sizeof(visited));
+}
+
+bool DFS(int u, int par)
+{
+    visited[u] = true;
+    for(int v : adj[u])
+    {
+        if(!visited[v])
+        {
+            if(DFS(v, u)) return true;
+        }
+        else if(v != par)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+int main()
+{
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
+    Input();
+    if(DFS(1, 0)) cout << "YES\n";
+    else cout << "NO\n";
+    
+    return 0;
+}
+
+Đồ thị liên thông:
+Sửa lại main để check tất cả thành phần liên thông:
+int main()
+{
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
+    Input();
+    for(int i = 0; i < m; i++)
+    {
+        if(!visited[i])
+        {
+            if(DFS(i, 0))
+            {
+                cout << "YES\n";
+                return 0;
+            }
+        }
+    }
+    cout << "NO\n";
+    return 0;
+}
+
+In ra chu trình liên thông và không liên thông:
+
+int n, m, st, ed;
+vector<int> adj[1001];
+bool visited[1001];
+int parent[1001];
+void Input()
+{
+    cin >> n >> m;
+    for(int i = 0; i < m; i++)
+    {
+        int x, y; cin >> x >> y;
+        adj[x].pb(y);
+        adj[y].pb(x);
+    }
+    memset(visited, false, sizeof(visited));
+}
+
+bool DFS(int u)
+{
+    visited[u] = true;
+    for(int v : adj[u])
+    {
+        
+        if(!visited[v])
+        {
+            parent[v] = u;
+            if(DFS(v)) return true;
+        }
+        else if(v != parent[u])
+        {
+            st = v; ed = u;
+            return true;
+        } 
+    }
+    return false;
+}
+int main()
+{
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
+    Input();
+    for(int i = 0 ; i < m; i++)
+    {
+        if(!visited[i])
+        {
+            if(DFS(i))
+            {
+                cout << "YES\n";
+                vi cycle; cycle.pb(st);
+                while(ed != st)
+                {
+                    cycle.pb(ed);
+                    ed = parent[ed];
+                }
+                cycle.pb(st);
+                reverse(cycle.begin(), cycle.end());
+                for(int i : cycle)
+                {
+                    cout << i << " ";
+                }
+                return 0;
+            }
+        }
+    }
+    cout << "NO\n";
+    return 0;
+}
+
+11.Tìm có chu trình hay không bằng BFS:
+int n, m, st, ed;
+vector<int> adj[1001];
+bool visited[1001];
+int parent[1001];
+void Input()
+{
+    cin >> n >> m;
+    for(int i = 0; i < m; i++)
+    {
+        int x, y; cin >> x >> y;
+        adj[x].pb(y);
+        adj[y].pb(x);
+    }
+    memset(visited, false, sizeof(visited));
+}
+
+bool BFS(int u)
+{
+    queue<int> q;
+    q.push(u);
+    visited[u] = true;
+    while(!q.empty())
+    {
+        int v = q.front();
+        q.pop();
+        for(int x : adj[v])
+        {
+            if(!visited[x])
+            {
+                q.push(x);
+                visited[x] = true;
+                parent[x] = v;
+            }
+            else if(x != parent[v])
+            {
+                return true;
+            } 
+        }
+    }
+    return false;
+}
+int main()
+{
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
+    Input();
+    for(int i = 0 ; i < m; i++)
+    {
+        if(!visited[i])
+        {
+            if(BFS(i))
+            {
+                cout << "YES\n";
+                return 0;
+            }
+        }
+    }
+    cout << "NO\n";
+    return 0;
+}
+
+11.Đồ thị có hướng dùng mảng màu color:
+int n, m;
+vector<int> adj[1001];
+int color[1001];
+void Input()
+{
+    cin >> n >> m;
+    for(int i = 1; i <= m; i++)
+    {
+        int x, y; cin >> x >> y;
+        adj[x].pb(y);
+    }
+    memset(color, 0, sizeof(color));
+}
+
+bool DFS(int u)
+{
+    color[u] = 1;
+    for(int v : adj[u])
+    {
+        if(color[v] == 0)
+        {
+            if(DFS(v)) return true;
+        }
+        else if(color[v] == 1) return true;
+    }
+    color[u] = 2;
+    return false;
+}
+int main()
+{
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
+    Input();
+    for(int i = 1; i <= n; i++)
+    {
+        if(color[i] == 0)
+        {
+            if(DFS(i))
+            {
+                cout << "YES\n";
+                return 0;
+            }
+        }
+    }
+    cout << "NO\n";
+    return 0;
+}
+
+12.Chu trình Euler:
+
+#define pb push_back
+#define ins insert
+
+int n, m;
+int degree[1001]; // Mảng lưu bậc
+set<int> adj[1001];
+void Input()
+{
+    cin >> n >> m;
+    for(int i = 1; i <= m; i++)
+    {
+        int x, y; cin >> x >> y;
+        adj[x].ins(y);
+        adj[y].ins(x);
+        degree[x]++;
+        degree[y]++;
+    }
+}
+
+void Euler(int u)
+{
+    stack<int> st;
+    vector<int> EC;
+    st.push(u);
+    while(!st.empty())
+    {
+        int v = st.top();
+        if(adj[v].size() != 0)
+        {
+            int x = *adj[v].begin();
+            st.push(x);
+            // Xóa cạnh vx;
+            adj[v].erase(x);
+            adj[x].erase(v);
+        }
+        else 
+        {
+            st.pop();
+            EC.pb(v);
+        }
+    }
+    reverse(EC.begin(), EC.end());
+    for(int x : EC) cout << x << " ";
+}
+
+
+13. Sắp xếp Topo - dành cho đồ thị có hướng:
+Nếu có đường nối từ u đên v thì trong sắp xếp topo thì u phải đứng trước v. Có nhiều thứ tự sắp xếp topo ==> Sắp xếp công việc trước sau.
+Không sắp xếp thứ tự topo nếu đồ thị có hướng có chu trình.
+
+int n, m;
+vector<int> adj[1001];
+bool visited[1001];
+vector<int> topo;
+
+void Input()
+{
+    cin >> n >> m;
+    for(int i = 1; i <= m; i++)
+    {
+        int x, y; cin >> x >> y;
+        adj[x].push_back(y);
+    }
+    memset(visited, false, sizeof(visited));
+}
+
+void DFS(int u)
+{
+    visited[u] = true;
+    for(int v : adj[u])
+    {
+        if(!visited[v])
+            DFS(v);
+    }
+    topo.push_back(u);
+}
+
+int main()
+{
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
+    
+    Input();
+    for(int i = 1; i <= n; i++)
+        if(!visited[i]) DFS(i);
+    reverse(topo.begin(), topo.end());
+    for(int x : topo) 
+        cout << x << " ";
+
+    return 0;
+}
+
+14. Thuật toán Xóa dần đỉnh - Kahn:
+int n, m;
+vector<int> adj[1001];
+vector<int> topo;
+int in[1001];
+
+void Input()
+{
+    memset(in, 0, sizeof(in));
+    cin >> n >> m;
+    for(int i = 1; i <= m; i++)
+    {
+        int x, y; cin >> x >> y;
+        adj[x].push_back(y);
+        in[y]++;
+    }
+}
+
+void Kahn()
+{
+    queue<int> q;
+    for(int i = 1; i <= n; i++)
+    {
+        if(in[i] == 0)
+        {
+            q.push(i);
+        }
+    }
+    while(!q.empty())
+    {
+        int v = q.front();
+        q.pop();
+        topo.push_back(v);
+        for(int u : adj[v])
+        {
+            in[u]--;
+            if(in[u] == 0)
+                q.push(u);
+        }
+    }
+
+    for(int i : topo)
+        cout << i << " ";
+}
+
+15. Tìm liên thông mạnh: thuật toán Kusaraju => O(2*(V+E)).
+B1: DFS trên G (topo) -> stack
+B2: Xây dựng TG (đồ thị đảo hướng các cạnh).
+B3: pop các đỉnh trong stack ở B1 và gọi DFS trên TG.
+
+int n, m;
+bool visited[1001];
+vector<int> adj[1001];
+vector<int> adjT[1001];
+stack<int> topo;
+int count = 0;
+
+void Input()
+{
+    memset(visited, false, sizeof(visited));
+    cin >> n >> m;
+    for(int i = 1; i <= m; i++)
+    {
+        int x, y; cin >> x >> y;
+        adj[x].push_back(y);
+        adjT[y].push_back(x);
+    }
+}
+
+void DFS(int u)
+{
+    visited[u] = true;
+    for(int v : adj[u])
+    {
+        if(!visited[v])
+            DFS(v);
+    }
+    topo.push(u);
+}
+
+void DFST(int u)
+{
+    visited[u] = true;
+    cout << u << " ";
+    for(int v : adjT[u])
+    {
+        if(!visited[v])
+        {
+            DFST(v);
+        }
+    }
+}
+
+void Kasuraju()
+{
+    // Chạy DFS trên đồ thị ban đầu
+    for(int i = 1; i <= n; i++)
+        if(!visited[i])
+            DFS(i);
+    cout << endl;
+
+    // Giải thuật Kasuraju
+    memset(visited, false, sizeof(visited));
+    while(!topo.empty())
+    {
+        int u = topo.top(); 
+        topo.pop();
+        for(int v : adjT[u])
+        {
+            if(!visited[v])
+            {
+                count++; // xem có bao nhiêu thành phần liên thông
+                cout << "Thanh phan lien thong manh: ";
+                DFST(v);
+                cout << endl;
+            }
+        }
+    }
+}
+Xem đồ thị có liên thông mạnh hay không, xét biến đếm count.
+
+16. Disjoint set Union : DSU (Union Find) Ghép tập hợp.
+int n;
+int parent[1001];
+int size[1001];
+vector<int> adj[1001];
+
+void make_set()
+{
+    for(int i = 1; i <= n; i++)
+    {
+        parent[i] = i;
+        size[i] = 1;
+    }
+}
+
+// Path Compression
+int find(int v)
+{
+    if(v == parent[v]) return v;
+    return parent[v] = find(parent[v]);
+}
+
+// Union Compression
+void Union(int a, int b)
+{
+    a = find(a);
+    b = find(b);
+    if(a != b)
+    {
+        if(size[a] < size[b]) swap(a, b);
+        parent[b] = a;
+        size[a] += size[b];
+    } 
+}
+
+17. Tìm cây khung theo Kruskal:
+MST : Minimun spanning tree
+Ý tưởng: 
+Cho n số đỉnh, E tập cạnh.
+Bước 1: 
+MST : rỗng
+d(MST) = 0;
+Bước 2 : Sắp xếp (sort độ dài của các cạnh).
+Bước 3 :
+while(|MST| < n - 1 && E != rỗng)
+{
+    e = cạnh ngắn nhất của E
+    E = E \ {e}
+    if(MST U (e) không tạo thành chu trình)
+    {
+        MST = MST U e;
+        d(MST) += d(e);
+    }
+}
+
+Code:
+struct Edge
+{
+    int u, v;
+    int w;
+    Edge(int x, int y, int z) : u(x), v(y), w(z) {}
+};
+
+int n, m;
+int parent[1001], sz[1001];
+vector<Edge> canh;
+
+void make_set()
+{
+    for(int i = 1; i <= n; i++)
+    {
+        parent[i] = i;
+        sz[i] = 1;
+    }
+}
+
+int find(int v)
+{
+    if(v == parent[v]) return v;
+    return parent[v] = find(parent[v]);
+}
+
+bool Union(int a, int b)
+{
+    a = find(a);
+    b = find(b);
+    if(a == b) return false;
+    if(sz[a] < sz[b]) swap(a, b);
+    parent[b] = a;
+    sz[a] += sz[b];
+    return true;
+}
+
+void Input()
+{
+    cin >> n >> m;
+    for(int i = 1; i <= m; i++)
+    {
+        int x, y, z; cin >> x >> y >> z;
+        Edge e = Edge(x, y, z);
+        canh.push_back(e);
+    }
+}
+
+bool Cmp(Edge a, Edge b)
+{
+    return a.w < b.w;
+}
+
+void Kruskal()
+{
+    // Tạo cây khung cực tiểu rỗng
+    vector<Edge> mst;
+    int d = 0;
+    sort(canh.begin(), canh.end(), Cmp);
+    for(int i = 0; i < m; i++)
+    {
+        if(mst.size() == n - 1) break;
+        Edge e = canh[i]; // Chọn cạnh ngắn nhất
+        if(Union(e.u, e.v))
+        {
+            mst.push_back(e);
+            d += e.w;
+        }
+    }
+    // Kiểm tra liên thông hoặc không có liên thông.
+    if(mst.size() != n -1)
+        cout << "Do thi khong co cay khung.\n";
+    else 
+    {
+        cout << "MST : " << d << endl;
+        for(auto x : mst)
+            cout << x.u << " " << x.v << " " << x.w << endl;
+    }
+}
+
+18. Tìm cây khung nhỏ nhất thuật toán Prim:
+
+Ý tưởng: 
+Chọn một đỉnh bất kì
+Bước 1: Khởi tạo
+    Vmst = {u};
+    V = V \ {u}
+    MST = rỗng;
+    d = 0;
+Bước 2:
+    while(V != rỗng)
+    {
+        e = (x, y) // Cạnh ngắn nhất với x thuộc V và y thuộc Vmst
+        MST = MST U {e};
+        d = d + d(e);
+        Vmst = Vmst U {x};
+        V = V \ {x};
+    }
+Bước 3 : Trả về kết quả
+
+Code:
+
+
+struct canh
+{
+    int x, y, z;
+}
+
+int n, m;
+vector<pair<int, int>> adj[1001];
+bool used[1001];
+// used[i] = true : dinh i thuoc tap V(MST) va neu used[i] = false thi dinh i nam trong tap V 
+ 
+void Input()
+{
+    cin >> n >> m;
+    for(int i = 1; i <= m; i++)
+    {
+        int x, y; cin >> x >> y;
+        adj[x].push_back(y);
+        adj[y].push_back(x);
+    }
+    memset(used, false, sizeof(used));
+}
+
+void Prim()
+{
+    vector<canh> MST;
+    int d = 0;
+    used[u] = true; // Dua dinh u vao V(MST)
+    while(MST.size() < n - 1)
+    {
+        // Chon e = (x, y) : Canh ngan nhat co x thuoc V va y thuoc V(MST)
+        int min_z = INF;
+        int X, Y;
+        rer(i, 1, n)
+            {
+                if(used[i]) // Neu dinh i thuoc VMST
+                {
+                    for(auto c : adj[i])
+                    {
+                        int j = c.first;
+                        int trongso = c.second;
+                        if(!used[j] && trongso < min_z)
+                        {
+                            min_z = trongso;
+                            X = j; 
+                            Y = i;
+                        }
+
+                    }
+
+                }
+
+            }
+            MST.push_back({X, Y, min_z});
+            d += min_z;
+            used[X] = true; // Cho dinh X vao VMST va loai X khoi V
+    }
+    cout << d << endl;
+    for(canh e : MST)
+        cout << e.x << " " << e.y << " " << e.z << " ";
+
+}
+
+Hoac:
+struct Edge
+{
+    int x, y, z;
+    Edge(int x, int y, int z) : x(x), y(y), z(z) {}
+};
+
+int n, m;
+vector<pair<int, int>> adj[1001];
+bool used[1001];
+int parent[1001], d[1001];
+
+void Input()
+{
+    cin >> n >> m;
+    for(int i = 0; i < m; i++)
+    {
+        int x, y, z; cin >> x >> y >> z;
+        adj[x].push_back({y, z});
+        adj[y].push_back({x, z}); 
+    }
+    memset(used, false, sizeof(used));
+    for(int i = 1; i <= n; i++)
+        d[i] = INF;
+}
+
+void Prim(int u)
+{
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>>Q;
+    vector<Edge> MST;
+    int res = 0;
+    Q.push({0, u});
+    while(!Q.empty())
+    {
+        pair<int, int> top = Q.top(); Q.pop();
+        int dinh = top.second, trongso = top.first;
+        if(used[dinh]) continue;
+        res += trongso;
+        used[dinh] = true;
+        if(u != dinh)
+        {
+            MST.push_back({dinh, parent[dinh], trongso});
+        }
+        for(auto a : adj[dinh])
+        {
+            int y = a.first, z = a.second;
+            if(!used[y]  && z < d[y])
+            {
+                Q.push({z, y});
+                d[y] = z;
+                parent[y] = dinh;
+            }
+        }
+    }
+    cout << res << endl;
+    for(auto a : MST)
+        cout << a.x << " " << a.y << " " << a.z << endl;
+}
+
+19. Tìm đường đi ngắn nhất Dijkstra:
+Áp dụng tìm đường đi ngắn nhất đến một đỉnh bất kì trong đồ thị có tham số
+Độ phức tạp : O((E + V)logn)
+Ý tượng: Giải thuật tham lam
+1. Đặt khoảng cách đỉnh nguồn là 0 và các đỉnh còn lại là vô cùng 
+2. Đặt đỉnh hiện tại vào nguồn
+3. Đánh dấu đỉnh đã được thăm
+4. Xét các đỉnh kề với đỉnh hiện tại và xem độ dài từ đỉnh nguồn tới các đỉnh đó và lấy độ dài ngắn hơn 
+5. Từ các đỉnh không có đường đi tới đỉnh nguồn, nó tìm đỉnh có khoảng cách từ nó đến đỉnh nguồn ngắn nhất và lặp lại
+Sử dụng hàng đợi ưu tiên:
+
+int n, m, s, t;
+vector<pair<int, int>> adj[1001];
+int parent[1001];
+
+void Input()
+{
+    cin >> n >> m >> s >> t;
+    for(int i = 0; i < m; i++)
+    {
+        int x, y, z; cin >> x >> y >> z;
+        adj[x].push_back({y, z});
+        adj[y].push_back({x, z});
+    }
+}
+
+void Dijsktra(int s, int t)
+{
+    vector<long long> d(n + 1, INF);
+    vector<bool> visited(n + 1, false);
+    d[s] = 0;
+    parent[s] = s;
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int,int>>> Q;
+    Q.push({0, s});
+    while(!Q.empty())
+    {
+        pair<int, int> top = Q.top(); Q.pop();
+        int v = top.second;
+        if(visited[v]) continue;
+        visited[v] = true;
+        for(auto it : adj[v])
+        {
+            int u = it.first;
+            int w = it.second;
+            if(d[u] > d[v] + w)
+            {
+                d[u] = d[v] + w;
+                Q.push({d[u], u});
+                parent[u] = v;
+            }
+        }
+    }
+    cout << d[t] << endl;
+    vector<int> paths;
+    while(true)
+    {
+        paths.push_back(t);
+        if(t == s) break;
+        t = parent[t];
+    }
+    reverse(paths.begin(), paths.end());
+    for(int x : paths)
+        cout <<  x << " ";
+}
